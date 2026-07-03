@@ -7,61 +7,83 @@
         <span class="sort__caret">▾</span>
       </button>
 
-      <div class="sort__backdrop" *ngIf="sortMenuOpen" (click)="toggleSortMenu()"></div>
+      @if (sortMenuOpen) {
+        <div class="sort__backdrop" (click)="toggleSortMenu()"></div>
+      }
 
-      <ul class="sort__menu" *ngIf="sortMenuOpen">
-        <li
-          *ngFor="let option of sortOptions"
-          class="sort__option"
-          [class.active]="option.value === sort"
-          (click)="setSort(option.value)"
-        >
-          <span class="sort__icon">{{ option.icon }}</span>
-          <span class="sort__option-text">
-            <span class="sort__option-label">{{ option.label }}</span>
-            <span class="sort__option-hint">{{ option.hint }}</span>
-          </span>
-        </li>
-      </ul>
+      @if (sortMenuOpen) {
+        <ul class="sort__menu">
+          @for (option of sortOptions; track option) {
+            <li
+              class="sort__option"
+              [class.active]="option.value === sort"
+              (click)="setSort(option.value)"
+              >
+              <span class="sort__icon">{{ option.icon }}</span>
+              <span class="sort__option-text">
+                <span class="sort__option-label">{{ option.label }}</span>
+                <span class="sort__option-hint">{{ option.hint }}</span>
+              </span>
+            </li>
+          }
+        </ul>
+      }
     </div>
 
     <a class="feed-toolbar__create" routerLink="/submit">+ Create Idea</a>
   </div>
 
-  <div class="search-banner card" *ngIf="search">
-    Results for <strong>“{{ search }}”</strong>
-    <a routerLink="/">clear</a>
-  </div>
-
-  <app-spinner *ngIf="loading" label="Loading ideas…"></app-spinner>
-
-  <div class="feed-error card" *ngIf="error && !loading">
-    Something went wrong loading the feed.
-    <button type="button" (click)="retry()">Retry</button>
-  </div>
-
-  <ng-container *ngIf="!error">
-    <div class="feed-empty card" *ngIf="!loading && ideas.length === 0">
-      <p *ngIf="search">No ideas match your search.</p>
-      <p *ngIf="!search && !isWinnersView">No active ideas right now.</p>
-      <p *ngIf="!search && isWinnersView">No closed ideas yet.</p>
-      <a *ngIf="!isWinnersView" routerLink="/submit">Post an idea →</a>
+  @if (search) {
+    <div class="search-banner card">
+      Results for <strong>“{{ search }}”</strong>
+      <a routerLink="/">clear</a>
     </div>
+  }
 
-    <app-idea-card
-      *ngFor="let idea of ideas; let i = index; trackBy: trackById"
-      [idea]="idea"
-      [isWinner]="isWinner(i)"
-      [closed]="isWinnersView"
-      (vote)="onVote(idea, $event)"
-    ></app-idea-card>
+  @if (loading) {
+    <app-spinner label="Loading ideas…"></app-spinner>
+  }
 
+  @if (error && !loading) {
+    <div class="feed-error card">
+      Something went wrong loading the feed.
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  }
+
+  @if (!error) {
+    @if (!loading && ideas.length === 0) {
+      <div class="feed-empty card">
+        @if (search) {
+          <p>No ideas match your search.</p>
+        }
+        @if (!search && !isWinnersView) {
+          <p>No active ideas right now.</p>
+        }
+        @if (!search && isWinnersView) {
+          <p>No closed ideas yet.</p>
+        }
+        @if (!isWinnersView) {
+          <a routerLink="/submit">Post an idea →</a>
+        }
+      </div>
+    }
+    @for (idea of ideas; track trackById(i, idea); let i = $index) {
+      <app-idea-card
+        [idea]="idea"
+        [isWinner]="isWinner(i)"
+        [closed]="isWinnersView"
+        (vote)="onVote(idea, $event)"
+      ></app-idea-card>
+    }
     <div #sentinel class="feed-sentinel"></div>
-
-    <app-spinner *ngIf="loadingMore" label="Loading more…"></app-spinner>
-
-    <div class="feed-end" *ngIf="!hasNextPage && !loading && ideas.length > 0">
-      🎉 You're all caught up
-    </div>
-  </ng-container>
+    @if (loadingMore) {
+      <app-spinner label="Loading more…"></app-spinner>
+    }
+    @if (!hasNextPage && !loading && ideas.length > 0) {
+      <div class="feed-end">
+        🎉 You're all caught up
+      </div>
+    }
+  }
 </div>

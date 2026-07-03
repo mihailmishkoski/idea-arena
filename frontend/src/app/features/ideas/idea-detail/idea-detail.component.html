@@ -1,13 +1,17 @@
 <div class="page">
   <a class="back-link" routerLink="/">← Back to feed</a>
 
-  <app-spinner *ngIf="loading" label="Loading idea…"></app-spinner>
+  @if (loading) {
+    <app-spinner label="Loading idea…"></app-spinner>
+  }
 
-  <div class="card detail-error" *ngIf="error && !loading">
-    This idea could not be loaded. It may have been removed.
-  </div>
+  @if (error && !loading) {
+    <div class="card detail-error">
+      This idea could not be loaded. It may have been removed.
+    </div>
+  }
 
-  <ng-container *ngIf="idea as post">
+  @if (idea; as post) {
     <!-- Post -->
     <article class="post card">
       <div class="post__vote">
@@ -17,207 +21,210 @@
           (vote)="onVoteIdea($event)"
         ></app-vote-buttons>
       </div>
-
       <div class="post__main">
         <div class="post__meta">
           <app-avatar [avatarId]="post.authorAvatar" [size]="22"></app-avatar>
           <span>Posted by u/{{ post.authorName || 'member' }}</span>
           <span class="post__dot">·</span>
           <span>{{ post.createdAtUtc | timeAgo }}</span>
-
-          <button
-            *ngIf="isAuthenticated && !isAuthor"
-            type="button"
-            class="post__chat"
-            (click)="onChatWithAuthor()"
-          >
-            💬 Chat with author
-          </button>
-          <button *ngIf="isAuthor" type="button" class="post__delete" (click)="onDeleteIdea()">
-            Delete
-          </button>
+          @if (isAuthenticated && !isAuthor) {
+            <button
+              type="button"
+              class="post__chat"
+              (click)="onChatWithAuthor()"
+              >
+              💬 Chat with author
+            </button>
+          }
+          @if (isAuthor) {
+            <button type="button" class="post__delete" (click)="onDeleteIdea()">
+              Delete
+            </button>
+          }
         </div>
-
         <h1 class="post__title">{{ post.name }}</h1>
-
         <section class="metric">
           <h2 class="metric__label">💡 Unique Value Proposition</h2>
           <p class="metric__text">{{ post.uniqueValueProposition }}</p>
         </section>
-
         <section class="metric">
           <h2 class="metric__label">🎯 Problem</h2>
           <p class="metric__text">{{ post.problem }}</p>
         </section>
-
         <section class="metric">
           <h2 class="metric__label">🛠️ Solution</h2>
           <p class="metric__text">{{ post.solution }}</p>
         </section>
-
-        <section class="metric" *ngIf="post.competition">
-          <h2 class="metric__label">⚔️ Competition</h2>
-          <p class="metric__text">{{ post.competition }}</p>
-        </section>
-
-        <section class="metric" *ngIf="post.incomeStrategy">
-          <h2 class="metric__label">💰 Income Strategy</h2>
-          <p class="metric__text">{{ post.incomeStrategy }}</p>
-        </section>
-
-        <section class="metric" *ngIf="post.exitStrategy">
-          <h2 class="metric__label">🚪 Exit Strategy</h2>
-          <p class="metric__text">{{ post.exitStrategy }}</p>
-        </section>
-
-        <section class="metric" *ngIf="post.videoPitchUrl">
-          <h2 class="metric__label">🎥 Video Pitch</h2>
-          <a class="metric__link" [href]="post.videoPitchUrl" target="_blank" rel="noopener">
-            {{ post.videoPitchUrl }}
-          </a>
-        </section>
+        @if (post.competition) {
+          <section class="metric">
+            <h2 class="metric__label">⚔️ Competition</h2>
+            <p class="metric__text">{{ post.competition }}</p>
+          </section>
+        }
+        @if (post.incomeStrategy) {
+          <section class="metric">
+            <h2 class="metric__label">💰 Income Strategy</h2>
+            <p class="metric__text">{{ post.incomeStrategy }}</p>
+          </section>
+        }
+        @if (post.exitStrategy) {
+          <section class="metric">
+            <h2 class="metric__label">🚪 Exit Strategy</h2>
+            <p class="metric__text">{{ post.exitStrategy }}</p>
+          </section>
+        }
+        @if (post.videoPitchUrl) {
+          <section class="metric">
+            <h2 class="metric__label">🎥 Video Pitch</h2>
+            <a class="metric__link" [href]="post.videoPitchUrl" target="_blank" rel="noopener">
+              {{ post.videoPitchUrl }}
+            </a>
+          </section>
+        }
       </div>
     </article>
-
     <!-- Co-founder call-to-action -->
-    <section class="cofound card" *ngIf="isAuthenticated && !isAuthor">
-      <!-- Already applied (this visit) -->
-      <div class="cofound__applied" *ngIf="cofoundApplied">
-        ✅ <strong>Application sent!</strong>
-        {{ post.authorName || 'The author' }} was notified in the app and by email.
-        You'll find the conversation under <a routerLink="/messages">Messages</a> once they respond.
-      </div>
-
-      <!-- A request is already pending — no re-applying, nothing to type into -->
-      <div class="cofound__applied" *ngIf="!cofoundApplied && cofoundState === 'pending'">
-        ⏳ You already sent {{ post.authorName || 'the author' }} a request —
-        waiting for their response. Check <a routerLink="/messages">Messages</a>.
-      </div>
-
-      <!-- Conversation already open -->
-      <div class="cofound__applied" *ngIf="!cofoundApplied && cofoundState === 'accepted'">
-        💬 You and {{ post.authorName || 'the author' }} are already connected —
-        <a [routerLink]="['/messages', existingConversationId]">open the conversation</a>.
-      </div>
-
-      <!-- Fresh: the call to action -->
-      <div class="cofound__header" *ngIf="!cofoundApplied && cofoundState === 'none'">
-        <div class="cofound__text">
-          <strong>Want to build this together?</strong>
-          <span>
-            Apply with a short pitch about yourself — it's delivered to
-            {{ post.authorName || 'the author' }}'s email, and in the app they simply
-            accept or decline.
-          </span>
-        </div>
-        <button type="button" class="cofound__btn" (click)="openCofoundModal()">
-          🤝 Apply to co-found
-        </button>
-      </div>
-    </section>
-
-    <!-- Co-founder application modal -->
-    <div class="modal-backdrop" *ngIf="showCofoundModal" (click)="closeCofoundModal()">
-      <div class="modal card" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-        <header class="modal__header">
-          <h3>🤝 Apply to co-found “{{ post.name }}”</h3>
-          <button type="button" class="modal__close" aria-label="Close" (click)="closeCofoundModal()">✕</button>
-        </header>
-
-        <form class="modal__form" (ngSubmit)="onApplyCofound()">
-          <p class="modal__hint">All fields are optional — but a real pitch gets real answers.</p>
-
-          <div class="modal__grid">
-            <label class="modal__field">
-              <span>Role you'd take</span>
-              <input name="role" [(ngModel)]="cofound.role" maxlength="100"
-                     placeholder="e.g. CTO — I'd own the tech" />
-            </label>
-
-            <label class="modal__field">
-              <span>Availability</span>
-              <input name="availability" [(ngModel)]="cofound.availability" maxlength="100"
-                     placeholder="e.g. 15–20 h/week, evenings" />
-            </label>
+    @if (isAuthenticated && !isAuthor) {
+      <section class="cofound card">
+        <!-- Already applied (this visit) -->
+        @if (cofoundApplied) {
+          <div class="cofound__applied">
+            ✅ <strong>Application sent!</strong>
+            {{ post.authorName || 'The author' }} was notified in the app and by email.
+            You'll find the conversation under <a routerLink="/messages">Messages</a> once they respond.
           </div>
-
-          <label class="modal__field">
-            <span>Skills & experience</span>
-            <textarea name="skills" [(ngModel)]="cofound.skills" rows="2" maxlength="500"
-                      placeholder="e.g. 5y full-stack (.NET/Angular), shipped two side projects"></textarea>
-          </label>
-
-          <label class="modal__field">
-            <span>Why this idea</span>
-            <textarea name="motivation" [(ngModel)]="cofound.motivation" rows="3" maxlength="1000"
-                      placeholder="What convinced you? What would you bring that's missing?"></textarea>
-          </label>
-
-          <label class="modal__field">
-            <span>Link (LinkedIn / GitHub / portfolio)</span>
-            <input name="contactLink" [(ngModel)]="cofound.contactLink" maxlength="300"
-                   placeholder="https://…" />
-          </label>
-
-          <div class="modal__error" *ngIf="cofoundError">{{ cofoundError }}</div>
-
-          <footer class="modal__actions">
-            <button type="button" class="modal__cancel" (click)="closeCofoundModal()">Cancel</button>
-            <button type="submit" class="cofound__btn" [disabled]="applyingCofound">
-              {{ applyingCofound ? 'Sending…' : 'Send application' }}
+        }
+        <!-- A request is already pending — no re-applying, nothing to type into -->
+        @if (!cofoundApplied && cofoundState === 'pending') {
+          <div class="cofound__applied">
+            ⏳ You already sent {{ post.authorName || 'the author' }} a request —
+            waiting for their response. Check <a routerLink="/messages">Messages</a>.
+          </div>
+        }
+        <!-- Conversation already open -->
+        @if (!cofoundApplied && cofoundState === 'accepted') {
+          <div class="cofound__applied">
+            💬 You and {{ post.authorName || 'the author' }} are already connected —
+            <a [routerLink]="['/messages', existingConversationId]">open the conversation</a>.
+          </div>
+        }
+        <!-- Fresh: the call to action -->
+        @if (!cofoundApplied && cofoundState === 'none') {
+          <div class="cofound__header">
+            <div class="cofound__text">
+              <strong>Want to build this together?</strong>
+              <span>
+                Apply with a short pitch about yourself — it's delivered to
+                {{ post.authorName || 'the author' }}'s email, and in the app they simply
+                accept or decline.
+              </span>
+            </div>
+            <button type="button" class="cofound__btn" (click)="openCofoundModal()">
+              🤝 Apply to co-found
             </button>
-          </footer>
-        </form>
+          </div>
+        }
+      </section>
+    }
+    <!-- Co-founder application modal -->
+    @if (showCofoundModal) {
+      <div class="modal-backdrop" (click)="closeCofoundModal()">
+        <div class="modal card" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+          <header class="modal__header">
+            <h3>🤝 Apply to co-found “{{ post.name }}”</h3>
+            <button type="button" class="modal__close" aria-label="Close" (click)="closeCofoundModal()">✕</button>
+          </header>
+          <form class="modal__form" (ngSubmit)="onApplyCofound()">
+            <p class="modal__hint">All fields are optional — but a real pitch gets real answers.</p>
+            <div class="modal__grid">
+              <label class="modal__field">
+                <span>Role you'd take</span>
+                <input name="role" [(ngModel)]="cofound.role" maxlength="100"
+                  placeholder="e.g. CTO — I'd own the tech" />
+                </label>
+                <label class="modal__field">
+                  <span>Availability</span>
+                  <input name="availability" [(ngModel)]="cofound.availability" maxlength="100"
+                    placeholder="e.g. 15–20 h/week, evenings" />
+                  </label>
+                </div>
+                <label class="modal__field">
+                  <span>Skills & experience</span>
+                  <textarea name="skills" [(ngModel)]="cofound.skills" rows="2" maxlength="500"
+                  placeholder="e.g. 5y full-stack (.NET/Angular), shipped two side projects"></textarea>
+                </label>
+                <label class="modal__field">
+                  <span>Why this idea</span>
+                  <textarea name="motivation" [(ngModel)]="cofound.motivation" rows="3" maxlength="1000"
+                  placeholder="What convinced you? What would you bring that's missing?"></textarea>
+                </label>
+                <label class="modal__field">
+                  <span>Link (LinkedIn / GitHub / portfolio)</span>
+                  <input name="contactLink" [(ngModel)]="cofound.contactLink" maxlength="300"
+                    placeholder="https://…" />
+                  </label>
+                  @if (cofoundError) {
+                    <div class="modal__error">{{ cofoundError }}</div>
+                  }
+                  <footer class="modal__actions">
+                    <button type="button" class="modal__cancel" (click)="closeCofoundModal()">Cancel</button>
+                    <button type="submit" class="cofound__btn" [disabled]="applyingCofound">
+                      {{ applyingCofound ? 'Sending…' : 'Send application' }}
+                    </button>
+                  </footer>
+                </form>
+              </div>
+            </div>
+          }
+          <!-- Comments -->
+          <section class="comments card">
+            <h3 class="comments__heading">
+              {{ post.commentCount }} {{ post.commentCount === 1 ? 'Comment' : 'Comments' }}
+            </h3>
+            @if (isAuthenticated) {
+              <app-comment-form
+                [submitting]="postingComment"
+                (submitComment)="onSubmitComment($event)"
+              ></app-comment-form>
+            } @else {
+              <div class="comments__login">
+                <a routerLink="/auth/login">Log in</a> to join the discussion.
+              </div>
+            }
+            <div class="comments__filters">
+              @for (f of filters; track f) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.active]="filterMetric === f.value"
+                  (click)="setFilter(f.value)"
+                  >
+                  {{ f.label }}
+                </button>
+              }
+            </div>
+            @if (loadingComments) {
+              <app-spinner label="Loading comments…"></app-spinner>
+            }
+            @if (!loadingComments && visibleTree.length === 0) {
+              <div class="comments__empty">
+                No comments here yet.
+              </div>
+            }
+            @if (!loadingComments) {
+              <div class="comments__list">
+                @for (comment of visibleTree; track trackByCommentId($index, comment)) {
+                  <app-comment-item
+                    [comment]="comment"
+                    [currentUserId]="currentUserId"
+                    [isAuthenticated]="isAuthenticated"
+                    (vote)="onVoteComment($event)"
+                    (remove)="onDeleteComment($event)"
+                    (reply)="onReply($event)"
+                  ></app-comment-item>
+                }
+              </div>
+            }
+          </section>
+        }
       </div>
-    </div>
-
-    <!-- Comments -->
-    <section class="comments card">
-      <h3 class="comments__heading">
-        {{ post.commentCount }} {{ post.commentCount === 1 ? 'Comment' : 'Comments' }}
-      </h3>
-
-      <app-comment-form
-        *ngIf="isAuthenticated; else loginPrompt"
-        [submitting]="postingComment"
-        (submitComment)="onSubmitComment($event)"
-      ></app-comment-form>
-
-      <ng-template #loginPrompt>
-        <div class="comments__login">
-          <a routerLink="/auth/login">Log in</a> to join the discussion.
-        </div>
-      </ng-template>
-
-      <div class="comments__filters">
-        <button
-          *ngFor="let f of filters"
-          type="button"
-          class="chip"
-          [class.active]="filterMetric === f.value"
-          (click)="setFilter(f.value)"
-        >
-          {{ f.label }}
-        </button>
-      </div>
-
-      <app-spinner *ngIf="loadingComments" label="Loading comments…"></app-spinner>
-
-      <div class="comments__empty" *ngIf="!loadingComments && visibleTree.length === 0">
-        No comments here yet.
-      </div>
-
-      <div class="comments__list" *ngIf="!loadingComments">
-        <app-comment-item
-          *ngFor="let comment of visibleTree; trackBy: trackByCommentId"
-          [comment]="comment"
-          [currentUserId]="currentUserId"
-          [isAuthenticated]="isAuthenticated"
-          (vote)="onVoteComment($event)"
-          (remove)="onDeleteComment($event)"
-          (reply)="onReply($event)"
-        ></app-comment-item>
-      </div>
-    </section>
-  </ng-container>
-</div>

@@ -14,97 +14,106 @@
       placeholder="Search ideas…"
       autocomplete="off"
       aria-label="Search ideas"
-    />
-  </form>
+      />
+    </form>
 
-  <div class="topbar__actions" *ngIf="currentUser$ | async as user; else guestActions">
-    <a class="btn btn--primary topbar__create" routerLink="/submit">+ Create</a>
-
-    <!-- Messages -->
-    <button type="button" class="icon-btn" (click)="goToMessages()" aria-label="Messages">
-      ✉️
-      <span class="icon-btn__badge" *ngIf="(unreadMessages$ | async) as unread">
-        {{ unread > 9 ? '9+' : unread }}
-      </span>
-    </button>
-
-    <!-- Notifications -->
-    <div class="menu-host">
-      <button
-        type="button"
-        class="icon-btn"
-        (click)="toggleMenu('notifications')"
-        aria-label="Notifications"
-      >
-        🔔
-        <span class="icon-btn__badge" *ngIf="(unreadNotifications$ | async) as unread">
-          {{ unread > 9 ? '9+' : unread }}
-        </span>
-      </button>
-
-      <div class="dropdown dropdown--wide" *ngIf="openMenu === 'notifications'">
-        <div class="dropdown__title">Notifications</div>
-        <ng-container *ngIf="notifications$ | async as items">
-          <div class="dropdown__empty" *ngIf="items.length === 0">Nothing here yet.</div>
+    @if (currentUser$ | async; as user) {
+      <div class="topbar__actions">
+        <a class="btn btn--primary topbar__create" routerLink="/submit">+ Create</a>
+        <!-- Messages -->
+        <button type="button" class="icon-btn" (click)="goToMessages()" aria-label="Messages">
+          ✉️
+          @if ((unreadMessages$ | async); as unread) {
+            <span class="icon-btn__badge">
+              {{ unread > 9 ? '9+' : unread }}
+            </span>
+          }
+        </button>
+        <!-- Notifications -->
+        <div class="menu-host">
           <button
             type="button"
-            class="notif"
-            *ngFor="let n of items"
-            [class.unread]="!n.isRead"
-            (click)="openNotification(n)"
-          >
-            <span class="notif__text">{{ n.text }}</span>
-            <span class="notif__time">{{ n.createdAtUtc | timeAgo }}</span>
+            class="icon-btn"
+            (click)="toggleMenu('notifications')"
+            aria-label="Notifications"
+            >
+            🔔
+            @if ((unreadNotifications$ | async); as unread) {
+              <span class="icon-btn__badge">
+                {{ unread > 9 ? '9+' : unread }}
+              </span>
+            }
           </button>
-        </ng-container>
-      </div>
-    </div>
-
-    <!-- Avatar menu -->
-    <div class="menu-host">
-      <button type="button" class="avatar-btn" (click)="toggleMenu('avatar')" aria-label="Account">
-        <app-avatar [avatarId]="user.avatarId" [size]="32"></app-avatar>
-      </button>
-
-      <div class="dropdown" *ngIf="openMenu === 'avatar'">
-        <div class="dropdown__user">
-          <app-avatar [avatarId]="user.avatarId" [size]="40"></app-avatar>
-          <div class="dropdown__user-text">
-            <strong>{{ user.displayName || 'Member' }}</strong>
-            <small>{{ user.email }}</small>
-          </div>
+          @if (openMenu === 'notifications') {
+            <div class="dropdown dropdown--wide">
+              <div class="dropdown__title">Notifications</div>
+              @if (notifications$ | async; as items) {
+                @if (items.length === 0) {
+                  <div class="dropdown__empty">Nothing here yet.</div>
+                }
+                @for (n of items; track n) {
+                  <button
+                    type="button"
+                    class="notif"
+                    [class.unread]="!n.isRead"
+                    (click)="openNotification(n)"
+                    >
+                    <span class="notif__text">{{ n.text }}</span>
+                    <span class="notif__time">{{ n.createdAtUtc | timeAgo }}</span>
+                  </button>
+                }
+              }
+            </div>
+          }
         </div>
-
-        <button type="button" class="dropdown__item" (click)="changingAvatar = !changingAvatar">
-          🎭 Change avatar
-        </button>
-
-        <div class="avatar-grid" *ngIf="changingAvatar">
-          <button
-            type="button"
-            class="avatar-grid__cell"
-            *ngFor="let a of avatars"
-            [class.active]="a.id === user.avatarId"
-            (click)="pickAvatar(a.id)"
-            [attr.aria-label]="a.id"
-          >
-            <app-avatar [avatarId]="a.id" [size]="34"></app-avatar>
+        <!-- Avatar menu -->
+        <div class="menu-host">
+          <button type="button" class="avatar-btn" (click)="toggleMenu('avatar')" aria-label="Account">
+            <app-avatar [avatarId]="user.avatarId" [size]="32"></app-avatar>
           </button>
+          @if (openMenu === 'avatar') {
+            <div class="dropdown">
+              <div class="dropdown__user">
+                <app-avatar [avatarId]="user.avatarId" [size]="40"></app-avatar>
+                <div class="dropdown__user-text">
+                  <strong>{{ user.displayName || 'Member' }}</strong>
+                  <small>{{ user.email }}</small>
+                </div>
+              </div>
+              <button type="button" class="dropdown__item" (click)="changingAvatar = !changingAvatar">
+                🎭 Change avatar
+              </button>
+              @if (changingAvatar) {
+                <div class="avatar-grid">
+                  @for (a of avatars; track a) {
+                    <button
+                      type="button"
+                      class="avatar-grid__cell"
+                      [class.active]="a.id === user.avatarId"
+                      (click)="pickAvatar(a.id)"
+                      [attr.aria-label]="a.id"
+                      >
+                      <app-avatar [avatarId]="a.id" [size]="34"></app-avatar>
+                    </button>
+                  }
+                </div>
+              }
+              <button type="button" class="dropdown__item dropdown__item--danger" (click)="onLogout()">
+                🚪 Log out
+              </button>
+            </div>
+          }
         </div>
-
-        <button type="button" class="dropdown__item dropdown__item--danger" (click)="onLogout()">
-          🚪 Log out
-        </button>
       </div>
-    </div>
-  </div>
+    } @else {
+      <div class="topbar__actions">
+        <a class="btn btn--ghost" routerLink="/auth/login">Log in</a>
+        <a class="btn btn--primary" routerLink="/auth/register">Sign up</a>
+      </div>
+    }
 
-  <ng-template #guestActions>
-    <div class="topbar__actions">
-      <a class="btn btn--ghost" routerLink="/auth/login">Log in</a>
-      <a class="btn btn--primary" routerLink="/auth/register">Sign up</a>
-    </div>
-  </ng-template>
 
-  <div class="topbar__backdrop" *ngIf="openMenu" (click)="closeMenus()"></div>
-</header>
+    @if (openMenu) {
+      <div class="topbar__backdrop" (click)="closeMenus()"></div>
+    }
+  </header>

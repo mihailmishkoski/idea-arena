@@ -3,8 +3,10 @@
   [class.idea-card--hot]="isHot"
   [class.idea-card--winner]="isWinner"
   (click)="openDetail()"
->
-  <div class="idea-card__ribbon" *ngIf="isWinner">🏆 WINNER</div>
+  >
+  @if (isWinner) {
+    <div class="idea-card__ribbon">🏆 WINNER</div>
+  }
 
   <div class="idea-card__vote" (click)="$event.stopPropagation()">
     <app-vote-buttons
@@ -22,9 +24,15 @@
       <span class="idea-card__dot">·</span>
       <span>{{ idea.createdAtUtc | timeAgo }}</span>
 
-      <span class="idea-card__hot" *ngIf="isHot">🔥 HOT</span>
-      <span class="idea-card__timer" *ngIf="timeLeftLabel">⏳ {{ timeLeftLabel }}</span>
-      <span class="idea-card__closed" *ngIf="closed">🔒 Closed</span>
+      @if (isHot) {
+        <span class="idea-card__hot">🔥 HOT</span>
+      }
+      @if (timeLeftLabel) {
+        <span class="idea-card__timer">⏳ {{ timeLeftLabel }}</span>
+      }
+      @if (closed) {
+        <span class="idea-card__closed">🔒 Closed</span>
+      }
     </div>
 
     <h2 class="idea-card__title">{{ idea.name }}</h2>

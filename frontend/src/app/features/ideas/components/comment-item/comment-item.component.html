@@ -19,44 +19,52 @@
     <p class="comment__content">{{ comment.content }}</p>
 
     <div class="comment__actions">
-      <button
-        type="button"
-        class="comment__action"
-        *ngIf="isAuthenticated"
-        (click)="toggleReplyBox()"
-      >
-        ↩ Reply
-      </button>
-      <button type="button" class="comment__action" *ngIf="canDelete" (click)="remove.emit(comment)">
-        Delete
-      </button>
+      @if (isAuthenticated) {
+        <button
+          type="button"
+          class="comment__action"
+          (click)="toggleReplyBox()"
+          >
+          ↩ Reply
+        </button>
+      }
+      @if (canDelete) {
+        <button type="button" class="comment__action" (click)="remove.emit(comment)">
+          Delete
+        </button>
+      }
     </div>
 
-    <div class="comment__reply-box" *ngIf="showReplyBox">
-      <textarea
-        [(ngModel)]="replyText"
-        rows="2"
-        placeholder="Write a reply…"
-      ></textarea>
-      <div class="comment__reply-actions">
-        <button type="button" class="btn-cancel" (click)="toggleReplyBox()">Cancel</button>
-        <button type="button" class="btn-reply" [disabled]="!replyText.trim()" (click)="submitReply()">
-          Reply
-        </button>
+    @if (showReplyBox) {
+      <div class="comment__reply-box">
+        <textarea
+          [(ngModel)]="replyText"
+          rows="2"
+          placeholder="Write a reply…"
+        ></textarea>
+        <div class="comment__reply-actions">
+          <button type="button" class="btn-cancel" (click)="toggleReplyBox()">Cancel</button>
+          <button type="button" class="btn-reply" [disabled]="!replyText.trim()" (click)="submitReply()">
+            Reply
+          </button>
+        </div>
       </div>
-    </div>
+    }
 
     <!-- Nested replies (recursive). Child events bubble up unchanged. -->
-    <div class="comment__replies" *ngIf="comment.replies.length">
-      <app-comment-item
-        *ngFor="let child of comment.replies"
-        [comment]="child"
-        [currentUserId]="currentUserId"
-        [isAuthenticated]="isAuthenticated"
-        (vote)="vote.emit($event)"
-        (remove)="remove.emit($event)"
-        (reply)="reply.emit($event)"
-      ></app-comment-item>
-    </div>
+    @if (comment.replies.length) {
+      <div class="comment__replies">
+        @for (child of comment.replies; track child) {
+          <app-comment-item
+            [comment]="child"
+            [currentUserId]="currentUserId"
+            [isAuthenticated]="isAuthenticated"
+            (vote)="vote.emit($event)"
+            (remove)="remove.emit($event)"
+            (reply)="reply.emit($event)"
+          ></app-comment-item>
+        }
+      </div>
+    }
   </div>
 </div>
