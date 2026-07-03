@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="create card">
+    <h1 class="create__title">Create an Idea</h1>
+    <p class="create__subtitle">
+      Pitch your business. Fields marked <span class="req">*</span> are required.
+    </p>
+
+    <div class="auth__error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label for="name">Business name <span class="req">*</span></label>
+        <input id="name" type="text" formControlName="name" placeholder="e.g. NimbusNotes" />
+        <small class="field__error" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+          A business name is required.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="uvp">Unique value proposition <span class="req">*</span></label>
+        <textarea id="uvp" formControlName="uniqueValueProposition"
+                  placeholder="What makes your idea uniquely valuable?"></textarea>
+        <small class="field__error"
+               *ngIf="form.get('uniqueValueProposition')?.touched && form.get('uniqueValueProposition')?.invalid">
+          A unique value proposition is required.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="problem">Problem <span class="req">*</span></label>
+        <textarea id="problem" formControlName="problem"
+                  placeholder="What problem does it solve?"></textarea>
+        <small class="field__error"
+               *ngIf="form.get('problem')?.touched && form.get('problem')?.invalid">
+          Describe the problem your idea solves.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="solution">Solution <span class="req">*</span></label>
+        <textarea id="solution" formControlName="solution"
+                  placeholder="How does it solve the problem?"></textarea>
+        <small class="field__error"
+               *ngIf="form.get('solution')?.touched && form.get('solution')?.invalid">
+          Describe your solution.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="competition">Competition</label>
+        <textarea id="competition" formControlName="competition"
+                  placeholder="Who else is in this space? (optional)"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="income">Income strategy</label>
+        <textarea id="income" formControlName="incomeStrategy"
+                  placeholder="How will it make money? (optional)"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="exit">Exit strategy</label>
+        <textarea id="exit" formControlName="exitStrategy"
+                  placeholder="What's the endgame? (optional)"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="video">Video pitch URL</label>
+        <input id="video" type="url" formControlName="videoPitchUrl"
+               placeholder="https://… (optional)" />
+        <small class="field__error"
+               *ngIf="form.get('videoPitchUrl')?.touched && form.get('videoPitchUrl')?.invalid">
+          Enter a valid URL starting with http:// or https://.
+        </small>
+      </div>
+
+      <button type="submit" class="btn-block" [disabled]="submitting">
+        {{ submitting ? 'Publishing…' : 'Publish Idea' }}
+      </button>
+    </form>
+  </div>
+</div>

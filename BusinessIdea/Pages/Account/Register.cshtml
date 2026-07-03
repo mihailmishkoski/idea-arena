@@ -1,0 +1,44 @@
+@page
+@model BusinessIdea.Web.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Create account";
+}
+
+<section class="auth-card">
+    <h1>Create your account</h1>
+    <p class="subtitle">Join the community and pitch your next big idea.</p>
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="field">
+            <label asp-for="Input.DisplayName">Display name</label>
+            <input asp-for="Input.DisplayName" autocomplete="nickname" placeholder="Ada Lovelace" />
+            <span asp-validation-for="Input.DisplayName" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Email">Email</label>
+            <input asp-for="Input.Email" autocomplete="username" placeholder="you@example.com" />
+            <span asp-validation-for="Input.Email" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.Password">Password</label>
+            <input asp-for="Input.Password" autocomplete="new-password" placeholder="At least 8 characters" />
+            <span asp-validation-for="Input.Password" class="field-error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.ConfirmPassword">Confirm password</label>
+            <input asp-for="Input.ConfirmPassword" autocomplete="new-password" placeholder="Re-enter your password" />
+            <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+    </form>
+
+    <p class="auth-alt">
+        Already have an account? <a href="/Account/Login">Sign in</a>
+    </p>
+</section>

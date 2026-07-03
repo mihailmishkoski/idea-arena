@@ -1,0 +1,127 @@
+<div class="chat-page">
+  <!-- Conversation list -->
+  <aside class="chat-list card">
+    <h2 class="chat-list__title">Messages</h2>
+
+    <!-- Incoming requests -->
+    <div class="chat-list__section" *ngIf="pendingIncoming.length">
+      <div class="chat-list__label">Chat requests</div>
+      <div class="request" *ngFor="let c of pendingIncoming; trackBy: trackByConversationId">
+        <app-avatar [avatarId]="c.otherUserAvatar" [size]="34"></app-avatar>
+        <div class="request__body">
+          <strong>{{ c.otherUserName || 'Member' }}</strong>
+          <small *ngIf="c.postName">about “{{ c.postName }}”</small>
+          <div class="request__actions">
+            <button type="button" class="request__accept" (click)="respond(c, true, $event)">
+              Accept
+            </button>
+            <button type="button" class="request__decline" (click)="respond(c, false, $event)">
+              Decline
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-list__empty" *ngIf="conversations.length === 0">
+      No conversations yet. Open an idea and hit “Chat with author”.
+    </div>
+
+    <button
+      type="button"
+      class="convo"
+      *ngFor="let c of regularConversations; trackBy: trackByConversationId"
+      [class.active]="selected?.id === c.id"
+      [class.muted]="c.status === Status.Declined"
+      (click)="select(c)"
+    >
+      <app-avatar [avatarId]="c.otherUserAvatar" [size]="34"></app-avatar>
+      <span class="convo__body">
+        <span class="convo__top">
+          <strong>{{ c.otherUserName || 'Member' }}</strong>
+          <small *ngIf="c.lastMessageAtUtc">{{ c.lastMessageAtUtc | timeAgo }}</small>
+        </span>
+        <span class="convo__preview">
+          <ng-container *ngIf="c.status === Status.Pending">⏳ Request pending…</ng-container>
+          <ng-container *ngIf="c.status === Status.Declined">🚫 Declined</ng-container>
+          <ng-container *ngIf="c.status === Status.Accepted">
+            {{ c.lastMessage || 'Say hi! 👋' }}
+          </ng-container>
+        </span>
+      </span>
+      <span class="convo__badge" *ngIf="c.unreadCount > 0">{{ c.unreadCount }}</span>
+    </button>
+  </aside>
+
+  <!-- Chat window -->
+  <section class="chat-window card">
+    <ng-container *ngIf="selected; else pickOne">
+      <header class="chat-window__header">
+        <app-avatar [avatarId]="selected.otherUserAvatar" [size]="34"></app-avatar>
+        <div class="chat-window__who">
+          <strong>{{ selected.otherUserName || 'Member' }}</strong>
+          <small *ngIf="selected.postName">about “{{ selected.postName }}”</small>
+        </div>
+      </header>
+
+      <div class="chat-window__pending" *ngIf="selected.status === Status.Pending">
+        <ng-container *ngIf="selected.iAmRequester">
+          ⏳ Waiting for {{ selected.otherUserName || 'them' }} to accept your request…
+        </ng-container>
+        <ng-container *ngIf="!selected.iAmRequester">
+          <p>{{ selected.otherUserName || 'This user' }} wants to chat with you.</p>
+          <div class="request__actions">
+            <button type="button" class="request__accept" (click)="respond(selected, true, $event)">
+              Accept
+            </button>
+            <button type="button" class="request__decline" (click)="respond(selected, false, $event)">
+              Decline
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="chat-window__declined" *ngIf="selected.status === Status.Declined">
+        🚫 This chat request was declined.
+      </div>
+
+      <ng-container *ngIf="selected.status === Status.Accepted">
+        <div class="chat-window__scroll" #scroller>
+          <app-spinner *ngIf="loadingMessages" label="Loading messages…"></app-spinner>
+
+          <div class="chat-window__empty" *ngIf="!loadingMessages && messages.length === 0">
+            No messages yet — break the ice! 🧊
+          </div>
+
+          <div
+            class="bubble"
+            *ngFor="let m of messages; trackBy: trackByMessageId"
+            [class.bubble--mine]="isMine(m)"
+          >
+            <span class="bubble__text">{{ m.content }}</span>
+            <span class="bubble__time">{{ m.sentAtUtc | timeAgo }}</span>
+          </div>
+        </div>
+
+        <form class="chat-window__composer" (ngSubmit)="send()">
+          <input
+            type="text"
+            name="draft"
+            [(ngModel)]="draft"
+            placeholder="Type a message…"
+            autocomplete="off"
+            maxlength="2000"
+          />
+          <button type="submit" [disabled]="sending || !draft.trim()">Send</button>
+        </form>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #pickOne>
+      <div class="chat-window__placeholder">
+        <span class="chat-window__placeholder-icon">💬</span>
+        <p>Select a conversation to start chatting.</p>
+      </div>
+    </ng-template>
+  </section>
+</div>

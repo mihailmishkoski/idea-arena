@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: businessidea-postgres
+    environment:
+      POSTGRES_DB: businessIdea
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set it in a .env file next to docker-compose.yml}
+    ports:
+      - "5432:5432"
+    volumes:
+      - businessidea-pgdata:/var/lib/postgresql/data
+
+volumes:
+  businessidea-pgdata:

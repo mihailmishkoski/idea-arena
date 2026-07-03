@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+}
+
+.avatar-picker__cell {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: var(--border);
+  }
+
+  &.active {
+    border-color: var(--reddit-orange);
+  }
+}

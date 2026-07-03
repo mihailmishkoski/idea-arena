@@ -1,0 +1,62 @@
+<div class="comment">
+  <div class="comment__gutter">
+    <app-vote-buttons
+      [score]="comment.score"
+      [currentUserVote]="comment.currentUserVote"
+      (vote)="onVote($event)"
+    ></app-vote-buttons>
+  </div>
+
+  <div class="comment__body">
+    <div class="comment__meta">
+      <app-avatar [avatarId]="comment.authorAvatar" [size]="20"></app-avatar>
+      <span class="comment__author">{{ authorHandle }}</span>
+      <span class="comment__dot">·</span>
+      <span>{{ comment.createdAtUtc | timeAgo }}</span>
+      <app-metric-badge [metric]="comment.targetMetric"></app-metric-badge>
+    </div>
+
+    <p class="comment__content">{{ comment.content }}</p>
+
+    <div class="comment__actions">
+      <button
+        type="button"
+        class="comment__action"
+        *ngIf="isAuthenticated"
+        (click)="toggleReplyBox()"
+      >
+        ↩ Reply
+      </button>
+      <button type="button" class="comment__action" *ngIf="canDelete" (click)="remove.emit(comment)">
+        Delete
+      </button>
+    </div>
+
+    <div class="comment__reply-box" *ngIf="showReplyBox">
+      <textarea
+        [(ngModel)]="replyText"
+        rows="2"
+        placeholder="Write a reply…"
+      ></textarea>
+      <div class="comment__reply-actions">
+        <button type="button" class="btn-cancel" (click)="toggleReplyBox()">Cancel</button>
+        <button type="button" class="btn-reply" [disabled]="!replyText.trim()" (click)="submitReply()">
+          Reply
+        </button>
+      </div>
+    </div>
+
+    <!-- Nested replies (recursive). Child events bubble up unchanged. -->
+    <div class="comment__replies" *ngIf="comment.replies.length">
+      <app-comment-item
+        *ngFor="let child of comment.replies"
+        [comment]="child"
+        [currentUserId]="currentUserId"
+        [isAuthenticated]="isAuthenticated"
+        (vote)="vote.emit($event)"
+        (remove)="remove.emit($event)"
+        (reply)="reply.emit($event)"
+      ></app-comment-item>
+    </div>
+  </div>
+</div>

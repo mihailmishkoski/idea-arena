@@ -1,0 +1,160 @@
+.feed-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+/* Reddit-style sort dropdown ---------------------------------------------- */
+.sort {
+  position: relative;
+}
+
+.sort__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover {
+    border-color: var(--reddit-blue);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.sort.open .sort__button {
+  border-color: var(--reddit-blue);
+  box-shadow: 0 0 0 3px rgba(0, 121, 211, 0.15);
+}
+
+.sort__caret {
+  font-size: 11px;
+  color: var(--meta);
+}
+
+.sort__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+}
+
+.sort__menu {
+  position: absolute;
+  z-index: 31;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 240px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.sort__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f6f7f8;
+  }
+
+  &.active {
+    background: #eef4fb;
+  }
+}
+
+.sort__option-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sort__option-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sort__option-hint {
+  font-size: 11px;
+  color: var(--meta);
+}
+
+.sort__icon {
+  font-size: 15px;
+}
+
+.feed-toolbar__create {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--reddit-orange);
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+/* Search banner ------------------------------------------------------------ */
+.search-banner {
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--text);
+
+  a {
+    margin-left: 8px;
+    font-weight: 600;
+  }
+}
+
+/* States ------------------------------------------------------------------- */
+.feed-error,
+.feed-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--meta);
+
+  button {
+    margin-left: 8px;
+    border: none;
+    background: var(--reddit-blue);
+    color: #fff;
+    border-radius: 12px;
+    padding: 4px 12px;
+    cursor: pointer;
+  }
+}
+
+.feed-empty p {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.feed-sentinel {
+  height: 1px;
+}
+
+.feed-end {
+  padding: 20px 0;
+  text-align: center;
+  color: var(--meta);
+  font-size: 13px;
+  font-weight: 600;
+}

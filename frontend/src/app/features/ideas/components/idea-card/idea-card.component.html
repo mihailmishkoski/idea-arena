@@ -1,0 +1,39 @@
+<article
+  class="idea-card"
+  [class.idea-card--hot]="isHot"
+  [class.idea-card--winner]="isWinner"
+  (click)="openDetail()"
+>
+  <div class="idea-card__ribbon" *ngIf="isWinner">🏆 WINNER</div>
+
+  <div class="idea-card__vote" (click)="$event.stopPropagation()">
+    <app-vote-buttons
+      [score]="idea.score"
+      [currentUserVote]="idea.currentUserVote"
+      [disabled]="closed"
+      (vote)="onVote($event)"
+    ></app-vote-buttons>
+  </div>
+
+  <div class="idea-card__body">
+    <div class="idea-card__meta">
+      <app-avatar [avatarId]="idea.authorAvatar" [size]="20"></app-avatar>
+      <span class="idea-card__author">u/{{ idea.authorName || 'member' }}</span>
+      <span class="idea-card__dot">·</span>
+      <span>{{ idea.createdAtUtc | timeAgo }}</span>
+
+      <span class="idea-card__hot" *ngIf="isHot">🔥 HOT</span>
+      <span class="idea-card__timer" *ngIf="timeLeftLabel">⏳ {{ timeLeftLabel }}</span>
+      <span class="idea-card__closed" *ngIf="closed">🔒 Closed</span>
+    </div>
+
+    <h2 class="idea-card__title">{{ idea.name }}</h2>
+    <p class="idea-card__uvp">{{ idea.uniqueValueProposition }}</p>
+
+    <div class="idea-card__footer">
+      <span class="idea-card__comments">
+        💬 {{ idea.commentCount }} {{ idea.commentCount === 1 ? 'comment' : 'comments' }}
+      </span>
+    </div>
+  </div>
+</article>

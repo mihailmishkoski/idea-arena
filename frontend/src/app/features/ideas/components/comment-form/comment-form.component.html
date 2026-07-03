@@ -1,0 +1,35 @@
+<form class="comment-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="comment-form__topics">
+    <span class="comment-form__label">Topic</span>
+    <div class="comment-form__badges">
+      <button
+        *ngFor="let m of metrics"
+        type="button"
+        class="badge-select"
+        [class.active]="selectedMetric === m.metric"
+        [style.color]="m.color"
+        [style.background]="m.background"
+        [style.borderColor]="selectedMetric === m.metric ? m.color : 'transparent'"
+        (click)="selectMetric(m.metric)"
+      >
+        {{ m.label }}
+      </button>
+    </div>
+  </div>
+
+  <textarea
+    formControlName="content"
+    rows="3"
+    placeholder="Share your thoughts…"
+  ></textarea>
+
+  <div class="comment-form__footer">
+    <small class="field__error"
+           *ngIf="form.get('content')?.touched && form.get('content')?.invalid">
+      A comment cannot be empty.
+    </small>
+    <button type="submit" class="comment-form__submit" [disabled]="submitting">
+      {{ submitting ? 'Posting…' : 'Comment' }}
+    </button>
+  </div>
+</form>

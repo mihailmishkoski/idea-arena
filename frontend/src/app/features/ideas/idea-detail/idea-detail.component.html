@@ -1,0 +1,131 @@
+<div class="page">
+  <a class="back-link" routerLink="/">← Back to feed</a>
+
+  <app-spinner *ngIf="loading" label="Loading idea…"></app-spinner>
+
+  <div class="card detail-error" *ngIf="error && !loading">
+    This idea could not be loaded. It may have been removed.
+  </div>
+
+  <ng-container *ngIf="idea as post">
+    <!-- Post -->
+    <article class="post card">
+      <div class="post__vote">
+        <app-vote-buttons
+          [score]="post.score"
+          [currentUserVote]="post.currentUserVote"
+          (vote)="onVoteIdea($event)"
+        ></app-vote-buttons>
+      </div>
+
+      <div class="post__main">
+        <div class="post__meta">
+          <app-avatar [avatarId]="post.authorAvatar" [size]="22"></app-avatar>
+          <span>Posted by u/{{ post.authorName || 'member' }}</span>
+          <span class="post__dot">·</span>
+          <span>{{ post.createdAtUtc | timeAgo }}</span>
+
+          <button
+            *ngIf="isAuthenticated && !isAuthor"
+            type="button"
+            class="post__chat"
+            (click)="onChatWithAuthor()"
+          >
+            💬 Chat with author
+          </button>
+          <button *ngIf="isAuthor" type="button" class="post__delete" (click)="onDeleteIdea()">
+            Delete
+          </button>
+        </div>
+
+        <h1 class="post__title">{{ post.name }}</h1>
+
+        <section class="metric">
+          <h2 class="metric__label">💡 Unique Value Proposition</h2>
+          <p class="metric__text">{{ post.uniqueValueProposition }}</p>
+        </section>
+
+        <section class="metric">
+          <h2 class="metric__label">🎯 Problem</h2>
+          <p class="metric__text">{{ post.problem }}</p>
+        </section>
+
+        <section class="metric">
+          <h2 class="metric__label">🛠️ Solution</h2>
+          <p class="metric__text">{{ post.solution }}</p>
+        </section>
+
+        <section class="metric" *ngIf="post.competition">
+          <h2 class="metric__label">⚔️ Competition</h2>
+          <p class="metric__text">{{ post.competition }}</p>
+        </section>
+
+        <section class="metric" *ngIf="post.incomeStrategy">
+          <h2 class="metric__label">💰 Income Strategy</h2>
+          <p class="metric__text">{{ post.incomeStrategy }}</p>
+        </section>
+
+        <section class="metric" *ngIf="post.exitStrategy">
+          <h2 class="metric__label">🚪 Exit Strategy</h2>
+          <p class="metric__text">{{ post.exitStrategy }}</p>
+        </section>
+
+        <section class="metric" *ngIf="post.videoPitchUrl">
+          <h2 class="metric__label">🎥 Video Pitch</h2>
+          <a class="metric__link" [href]="post.videoPitchUrl" target="_blank" rel="noopener">
+            {{ post.videoPitchUrl }}
+          </a>
+        </section>
+      </div>
+    </article>
+
+    <!-- Comments -->
+    <section class="comments card">
+      <h3 class="comments__heading">
+        {{ post.commentCount }} {{ post.commentCount === 1 ? 'Comment' : 'Comments' }}
+      </h3>
+
+      <app-comment-form
+        *ngIf="isAuthenticated; else loginPrompt"
+        [submitting]="postingComment"
+        (submitComment)="onSubmitComment($event)"
+      ></app-comment-form>
+
+      <ng-template #loginPrompt>
+        <div class="comments__login">
+          <a routerLink="/auth/login">Log in</a> to join the discussion.
+        </div>
+      </ng-template>
+
+      <div class="comments__filters">
+        <button
+          *ngFor="let f of filters"
+          type="button"
+          class="chip"
+          [class.active]="filterMetric === f.value"
+          (click)="setFilter(f.value)"
+        >
+          {{ f.label }}
+        </button>
+      </div>
+
+      <app-spinner *ngIf="loadingComments" label="Loading comments…"></app-spinner>
+
+      <div class="comments__empty" *ngIf="!loadingComments && visibleTree.length === 0">
+        No comments here yet.
+      </div>
+
+      <div class="comments__list" *ngIf="!loadingComments">
+        <app-comment-item
+          *ngFor="let comment of visibleTree; trackBy: trackByCommentId"
+          [comment]="comment"
+          [currentUserId]="currentUserId"
+          [isAuthenticated]="isAuthenticated"
+          (vote)="onVoteComment($event)"
+          (remove)="onDeleteComment($event)"
+          (reply)="onReply($event)"
+        ></app-comment-item>
+      </div>
+    </section>
+  </ng-container>
+</div>

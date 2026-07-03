@@ -1,0 +1,47 @@
+# --- .NET build output ---
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# --- Visual Studio ---
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsidx
+
+# --- Rider / VS Code ---
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# --- Test & coverage ---
+TestResults/
+*.trx
+coverage/
+*.coverage
+
+# --- Logs & temp ---
+*.log
+logs/
+*.tmp
+
+# --- Local secrets / environment ---
+appsettings.*.Local.json
+*.pfx
+.env
+.env.local
+
+# --- OS junk ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# --- Claude Code local settings ---
+.claude/settings.local.json
+
+# (frontend/ has its own .gitignore for node_modules, dist, .angular)

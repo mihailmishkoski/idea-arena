@@ -1,0 +1,29 @@
+<div class="vote" [class.vote--horizontal]="orientation === 'horizontal'">
+  <button
+    type="button"
+    class="vote__btn vote__btn--up"
+    [class.active]="isUpvoted"
+    [disabled]="disabled"
+    (click)="onVote(Direction.Up)"
+    aria-label="Upvote"
+  >
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+      <path d="M10 3l7 8h-4v6H7v-6H3l7-8z" />
+    </svg>
+  </button>
+
+  <span class="vote__score" [class.up]="isUpvoted" [class.down]="isDownvoted">{{ score }}</span>
+
+  <button
+    type="button"
+    class="vote__btn vote__btn--down"
+    [class.active]="isDownvoted"
+    [disabled]="disabled"
+    (click)="onVote(Direction.Down)"
+    aria-label="Downvote"
+  >
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+      <path d="M10 17l-7-8h4V3h6v6h4l-7 8z" />
+    </svg>
+  </button>
+</div>
