@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idea Arena — where business ideas compete</title>
+<meta name="description" content="Idea Arena is a Reddit-style platform where business ideas compete for 14 days and the community decides which ones deserve to live.">
+<style>
+  :root {
+    --upvote: #ff4500;
+    --downvote: #7193ff;
+    --page-bg: #dae0e6;
+    --card-bg: #ffffff;
+    --border: #ccc;
+    --text: #1c1c1c;
+    --text-muted: #7c7c7c;
+    --header-h: 56px;
+    --code-bg: #f6f7f8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
+  body {
+    font-family: "Segoe UI", -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ---------- Header (matches the app) ---------- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.15rem; text-decoration: none; color: var(--text); }
+  .brand-badge {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--upvote); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem; font-weight: 800;
+  }
+  .brand span em { color: var(--upvote); font-style: normal; }
+  header nav { margin-left: auto; display: flex; gap: 4px; overflow-x: auto; }
+  header nav a {
+    text-decoration: none; color: var(--text-muted);
+    font-size: 0.82rem; font-weight: 600;
+    padding: 6px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  header nav a:hover { background: var(--code-bg); color: var(--text); }
+  header nav a.active { background: var(--upvote); color: #fff; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 860px; margin: 0 auto; padding: calc(var(--header-h) + 24px) 16px 64px; }
+  section { margin-bottom: 24px; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px 32px;
+  }
+  @media (max-width: 640px) { .card { padding: 20px 18px; } }
+
+  h1 { font-size: 2rem; line-height: 1.25; }
+  h2 {
+    font-size: 1.45rem; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  h2 .hash { color: var(--upvote); margin-right: 6px; }
+  h3 { font-size: 1.05rem; margin: 20px 0 8px; }
+  p { margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--downvote); }
+  ul, ol { margin: 0 0 12px 22px; }
+  li { margin-bottom: 6px; }
+  strong { font-weight: 700; }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 44px 32px; }
+  .hero .votes {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
+    margin-bottom: 16px; font-weight: 800; font-size: 1.4rem;
+  }
+  .hero .votes .up { color: var(--upvote); }
+  .hero .votes .down { color: var(--downvote); }
+  .hero p.tagline { font-size: 1.12rem; color: var(--text-muted); max-width: 560px; margin: 10px auto 0; }
+  .hero .cta { margin-top: 22px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 700; font-size: 0.9rem;
+    padding: 9px 20px; border-radius: 999px;
+  }
+  .btn-primary { background: var(--upvote); color: #fff; }
+  .btn-ghost { border: 1px solid var(--upvote); color: var(--upvote); }
+
+  /* ---------- Reusable bits ---------- */
+  .pill {
+    display: inline-block; font-size: 0.72rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 999px; margin: 2px 4px 2px 0;
+    background: var(--code-bg); border: 1px solid var(--border); color: var(--text);
+  }
+  .pill.orange { background: #fff3ee; border-color: var(--upvote); color: var(--upvote); }
+  .pill.blue   { background: #f0f4ff; border-color: var(--downvote); color: #4b6cd8; }
+
+  .steps { list-style: none; margin: 16px 0 4px; counter-reset: step; }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding: 0 0 18px 52px; margin: 0;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--upvote); color: #fff;
+    font-weight: 800; display: flex; align-items: center; justify-content: center;
+  }
+  .steps li:not(:last-child)::after {
+    content: ""; position: absolute; left: 16px; top: 38px; bottom: 2px;
+    width: 2px; background: var(--border);
+  }
+  .steps b { display: block; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+  .tile { border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; background: var(--code-bg); }
+  .tile b { display: block; margin-bottom: 4px; }
+  .tile b::before { content: "▲ "; color: var(--upvote); }
+  .tile p { font-size: 0.88rem; color: var(--text-muted); margin: 0; }
+
+  /* ---------- Diagrams ---------- */
+  .diagram { margin: 18px 0; overflow-x: auto; }
+  .layers { min-width: 480px; display: flex; flex-direction: column; gap: 8px; }
+  .layer {
+    border: 1.5px solid var(--border); border-radius: 6px;
+    padding: 10px 16px; background: var(--card-bg); text-align: center;
+  }
+  .layer b { display: block; }
+  .layer small { color: var(--text-muted); }
+  .layer.l-spa    { border-color: var(--upvote);   background: #fff3ee; }
+  .layer.l-web    { border-color: #e8a03c;         background: #fdf6ea; }
+  .layer.l-app    { border-color: #4caf7d;         background: #eefaf3; }
+  .layer.l-domain { border-color: #9a6dd7;         background: #f6f0fd; }
+  .layer.l-infra  { border-color: var(--downvote); background: #f0f4ff; }
+  .layer-arrow { text-align: center; color: var(--text-muted); font-size: 0.8rem; line-height: 1; }
+
+  .flow { min-width: 560px; font-family: Consolas, "Courier New", monospace; font-size: 0.82rem;
+          background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+          padding: 16px 20px; white-space: pre; line-height: 1.7; }
+
+  code {
+    font-family: Consolas, "Courier New", monospace; font-size: 0.86em;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 6px;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 14px 18px; overflow-x: auto; margin-bottom: 12px;
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .table-wrap { overflow-x: auto; }
+
+  footer {
+    text-align: center; color: var(--text-muted); font-size: 0.82rem;
+    padding: 24px 16px 8px;
+  }
+  footer .up { color: var(--upvote); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#top">
+    <span class="brand-badge">▲</span>
+    <span>idea<em>arena</em></span>
+  </a>
+  <nav id="nav">
+    <a href="#idea">The idea</a>
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#realtime">Realtime</a>
+    <a href="#model">Data model</a>
+    <a href="#stack">Tech stack</a>
+    <a href="#run">Run locally</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="card hero">
+    <div class="votes"><span class="up">▲</span><span>Idea Arena</span><span class="down">▼</span></div>
+    <h1>Where business ideas compete —<br>and the community decides.</h1>
+    <p class="tagline">A Reddit-style arena where every idea gets exactly 14 days to convince the crowd. The best ones enter the hall of winners. The rest make room for the next challenger.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#idea">Why it exists</a>
+      <a class="btn btn-ghost" href="#architecture">How it's built</a>
+    </div>
+  </section>
+
+  <!-- ============ BUSINESS ============ -->
+  <section class="card" id="idea">
+    <h2><span class="hash">#</span>The idea</h2>
+    <p>Everybody has a business idea. Almost nobody has a cheap, fast way to find out whether it survives contact with other people. Asking friends produces politeness, not truth; building an MVP costs months. <strong>Idea Arena is the step in between:</strong> post the idea, let a crowd of strangers pick it apart, and watch an honest score emerge from votes and arguments.</p>
+    <p>Three design decisions make the feedback honest:</p>
+    <h3>1. Every idea is a structured pitch, not a wall of text</h3>
+    <p>An idea is submitted through fixed fields — the same questions an investor would ask:</p>
+    <p>
+      <span class="pill orange">Unique Value Proposition</span>
+      <span class="pill orange">Problem</span>
+      <span class="pill orange">Solution</span>
+      <span class="pill">Competition</span>
+      <span class="pill">Income strategy</span>
+      <span class="pill">Exit strategy</span>
+      <span class="pill">Video pitch</span>
+    </p>
+    <p>Structure forces clarity from the author — and gives the community something concrete to attack.</p>
+    <h3>2. Feedback is aimed, not general</h3>
+    <p>Comments carry a <strong>metric badge</strong>: a thread can target the exit strategy specifically, or the problem statement, or the idea as a whole. Instead of one noisy pile of replies, the author sees exactly <em>which part</em> of the pitch is weak. Replies inherit the badge of their parent, so each discussion stays on topic.</p>
+    <h3>3. The clock creates urgency</h3>
+    <p>An idea lives in the arena for exactly <strong>14 days</strong>. While active, it competes in the feed for votes and discussion. When time runs out it leaves the feed, its score freezes, and it is ranked among the retired ideas — the top of that ranking is the <strong>Winners</strong> board. A deadline means voting momentum matters, the feed never silts up with zombies, and "winning" actually means something.</p>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="card" id="how">
+    <h2><span class="hash">#</span>How it works</h2>
+    <ol class="steps">
+      <li><b>Sign up &amp; pick an avatar</b> Create an account, choose an avatar from the built-in collection, and you're in the arena.</li>
+      <li><b>Post your idea</b> Fill in the pitch: name, UVP, problem and solution are required; competition, income strategy, exit strategy and a video pitch link are optional ammunition.</li>
+      <li><b>The community votes</b> Reddit rules: one account, one vote per idea or comment. Press the same arrow again to take it back; press the other one to flip.</li>
+      <li><b>Discussion drills into metrics</b> Commenters tag their thread with the metric it targets. Threads nest infinitely, and every reply stays bound to its topic.</li>
+      <li><b>Fourteen days on the clock</b> Sort the feed by Top, New, Best (engagement), Controversial or Old while the battle runs — or search the arena by name, UVP and problem text.</li>
+      <li><b>Winners are crowned</b> After expiry the final score is frozen. The Winners view ranks all retired ideas; the top spot is the reigning champion.</li>
+      <li><b>Take it further, privately</b> Interested in an idea (or its author)? Send a <strong>chat request</strong>. If they accept, a private realtime conversation opens — the deal room after the pitch.</li>
+    </ol>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="card" id="features">
+    <h2><span class="hash">#</span>Features</h2>
+    <div class="grid">
+      <div class="tile"><b>Reddit-style voting</b><p>Toggle &amp; flip semantics, one vote per user, on both ideas and comments.</p></div>
+      <div class="tile"><b>Metric-targeted threads</b><p>Comment threads aimed at a specific pitch field, with color-coded badges.</p></div>
+      <div class="tile"><b>14-day idea lifecycle</b><p>Ideas expire out of the feed; scores freeze; winners are ranked forever.</p></div>
+      <div class="tile"><b>Six feed sorts + search</b><p>Top, New, Best, Controversial, Old, Winners — plus free-text search.</p></div>
+      <div class="tile"><b>Infinite scroll</b><p>The feed streams in pages of 10 as you scroll, no pagination buttons.</p></div>
+      <div class="tile"><b>Chat with consent</b><p>Private chat opens only after a request is accepted — no unsolicited DMs.</p></div>
+      <div class="tile"><b>Live notifications</b><p>Chat requests, acceptances and messages arrive instantly over WebSockets.</p></div>
+      <div class="tile"><b>Avatars</b><p>Pick an identity from the built-in avatar set at registration, change it anytime.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ ARCHITECTURE ============ -->
+  <section class="card" id="architecture">
+    <h2><span class="hash">#</span>Architecture</h2>
+    <p>The backend follows <strong>Clean Architecture</strong>: dependencies point inward only, so business rules never know what database or web framework surrounds them.</p>
+    <div class="diagram">
+      <div class="layers">
+        <div class="layer l-spa"><b>Angular 16 SPA</b><small>components · services · RxJS state · SignalR client</small></div>
+        <div class="layer-arrow">▼ &nbsp;HTTP /api (cookie auth) &nbsp;+&nbsp; WebSocket /hubs/chat &nbsp;▼</div>
+        <div class="layer l-web"><b>Web (ASP.NET Core 8)</b><small>thin controllers · SignalR hub · exception filter · Identity cookie auth</small></div>
+        <div class="layer-arrow">▼ &nbsp;sends commands / queries via MediatR&nbsp; ▼</div>
+        <div class="layer l-app"><b>Application</b><small>CQRS handlers · FluentValidation · interfaces (ports): IApplicationDbContext, ICurrentUserService, IRealtimeNotifier</small></div>
+        <div class="layer-arrow">▼ &nbsp;pure business objects&nbsp; ▼</div>
+        <div class="layer l-domain"><b>Domain</b><small>entities · enums · idea rules — zero dependencies</small></div>
+        <div class="layer-arrow">▲ &nbsp;Infrastructure implements the Application ports&nbsp; ▲</div>
+        <div class="layer l-infra"><b>Infrastructure</b><small>EF Core + Npgsql · ASP.NET Identity · migrations · seeder → PostgreSQL</small></div>
+      </div>
+    </div>
+    <h3>CQRS with MediatR</h3>
+    <p>Every use case is a small class pair: a <code>Command</code> or <code>Query</code> record describing intent, and a <code>Handler</code> executing it. Controllers stay one line long — they forward the request to MediatR and return the result. A validation behaviour runs FluentValidation rules on every command before any handler sees it, and a global exception filter translates domain exceptions (<code>NotFound</code>, <code>Forbidden</code>, <code>Validation</code>) into proper HTTP status codes.</p>
+    <h3>Ports &amp; adapters</h3>
+    <p>Handlers depend on interfaces, never on technology: <code>IApplicationDbContext</code> hides EF Core, <code>ICurrentUserService</code> hides the auth cookie, <code>IRealtimeNotifier</code> hides SignalR. Swap PostgreSQL or the realtime transport tomorrow — the business layer doesn't change a line.</p>
+    <h3>Authentication</h3>
+    <p>Classic and boring on purpose: ASP.NET Identity issues an <strong>encrypted, HTTP-only cookie</strong> at login. The browser attaches it to every API call <em>and</em> to the WebSocket handshake, so one mechanism guards both worlds. Unauthenticated API calls get a clean <code>401</code> — no redirects, the SPA owns all navigation.</p>
+  </section>
+
+  <!-- ============ REALTIME ============ -->
+  <section class="card" id="realtime">
+    <h2><span class="hash">#</span>Realtime, explained</h2>
+    <p>Users never connect to each other — browsers can't accept incoming connections. Instead every signed-in user holds <strong>one persistent WebSocket to the server</strong> (SignalR, hub <code>/hubs/chat</code>), and the server routes between them like a switchboard:</p>
+    <div class="diagram">
+<div class="flow">User A                    Server                              User B
+  │                         │                                   │
+  │ POST /api/chat/…/messages                                   │
+  ├────────────────────────►│ 1. validate (participant?         │
+  │                         │    request accepted?)             │
+  │                         │ 2. save message to PostgreSQL     │
+  │                         │ 3. look up B's live connections   │
+  │                         │    in the in-memory user map      │
+  │ 4. HTTP 200 + DTO       │ 5. push same DTO over WebSocket   │
+  │◄────────────────────────┤──────────────────────────────────►│
+  │ (sender's UI updates)   │           (recipient's UI updates)│</div>
+    </div>
+    <p>Design rules that keep it simple:</p>
+    <ul>
+      <li><strong>All actions go over HTTP.</strong> Sending a message is a normal POST with the full validation pipeline. The hub class is literally empty — the socket is a delivery door, not an entrance.</li>
+      <li><strong>The socket only pushes server → client:</strong> two events, <code>chatMessage</code> and <code>notification</code>. It comes up at login and goes down at logout, app-wide — so the notification bell is live even while you browse the feed.</li>
+      <li><strong>PostgreSQL is the source of truth.</strong> If the recipient is offline the push is a no-op; the message waits in the database and appears on their next fetch. The socket is an accelerator, never the storage.</li>
+      <li><strong>Identity comes from the cookie.</strong> SignalR maps each connection to the user id claim, so handlers target <em>a user</em> (all their open tabs), not a raw socket.</li>
+    </ul>
+  </section>
+
+  <!-- ============ DATA MODEL ============ -->
+  <section class="card" id="model">
+    <h2><span class="hash">#</span>Data model</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Entity</th><th>Purpose</th><th>Interesting detail</th></tr>
+      <tr><td><strong>BusinessIdeaPost</strong></td><td>The pitch: name, UVP, problem, solution + optional competition, income &amp; exit strategy, video pitch.</td><td>No "expired" column — active/retired is computed from <code>CreatedAtUtc</code> + the 14-day rule.</td></tr>
+      <tr><td><strong>Comment</strong></td><td>Threaded discussion, self-referencing via <code>ParentCommentId</code>.</td><td>Carries an <code>IdeaMetric</code>; replies inherit the parent's metric, enforced server-side.</td></tr>
+      <tr><td><strong>PostVote / CommentVote</strong></td><td>Up/down votes.</td><td>Unique index on (target, user) — one vote per account, enforced by the database itself.</td></tr>
+      <tr><td><strong>Conversation</strong></td><td>A chat channel between two users.</td><td>Born as a <em>request</em> (Pending → Accepted/Declined); messages flow only after acceptance.</td></tr>
+      <tr><td><strong>ChatMessage</strong></td><td>One message in a conversation.</td><td>Read/unread state drives the per-conversation badge.</td></tr>
+      <tr><td><strong>Notification</strong></td><td>The bell: chat requests, acceptances…</td><td>Text is pre-rendered server-side; delivered live via WebSocket <em>and</em> persisted.</td></tr>
+      <tr><td><strong>ApplicationUser</strong></td><td>Identity account + display name + avatar.</td><td>Kept out of the Application layer — read models see a slim <code>AuthorInfo</code> projection only.</td></tr>
+    </table>
+    </div>
+    <p>A seeder can populate a realistic arena on demand: ~40 users, ~200 ideas back-dated across three months, ~2,000 threaded comments and thousands of votes — so every sort order has something meaningful to show from day one.</p>
+  </section>
+
+  <!-- ============ TECH STACK ============ -->
+  <section class="card" id="stack">
+    <h2><span class="hash">#</span>Tech stack</h2>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Layer</th><th>Technology</th></tr>
+      <tr><td>Frontend</td><td>Angular 16 (modules, lazy features), RxJS 7, SCSS, <code>@microsoft/signalr</code></td></tr>
+      <tr><td>API</td><td>ASP.NET Core 8, MediatR (CQRS), FluentValidation, SignalR</td></tr>
+      <tr><td>Auth</td><td>ASP.NET Identity, encrypted HTTP-only cookie</td></tr>
+      <tr><td>Data</td><td>PostgreSQL, EF Core 8 + Npgsql, code-first migrations</td></tr>
+      <tr><td>Dev experience</td><td>Angular dev-server proxy (same-origin cookies + WebSocket), Swagger, database seeder, docker-compose for Postgres</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ RUN LOCALLY ============ -->
+  <section class="card" id="run">
+    <h2><span class="hash">#</span>Run it locally</h2>
+    <p><strong>Prerequisites:</strong> .NET 8 SDK, Node 18+, and PostgreSQL (native install, or <code>docker compose up -d</code> with a <code>.env</code> file — see <code>.env.example</code>).</p>
+    <p><strong>1 — Configure the database password</strong> (stored in user-secrets, never in the repo):</p>
+    <pre><code>cd BusinessIdea
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
+  "Host=localhost;Port=5432;Database=businessIdea;Username=postgres;Password=&lt;yours&gt;"</code></pre>
+    <p><strong>2 — Start the API</strong> (applies migrations automatically on startup):</p>
+    <pre><code>cd BusinessIdea
+dotnet run          # optionally: dotnet run -- seed  (mock data, then exits)</code></pre>
+    <p><strong>3 — Start the SPA</strong> (proxies /api and /hubs to the backend):</p>
+    <pre><code>cd frontend
+npm install
+npx ng serve        # → http://localhost:4200</code></pre>
+  </section>
+
+  <footer>
+    <span class="up">▲</span> Idea Arena — a portfolio project · .NET 8 · Angular 16 · PostgreSQL · SignalR
+  </footer>
+</main>
+
+<script>
+  // Scrollspy: highlight the nav link of the section in view.
+  const links = document.querySelectorAll('#nav a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => s && spy.observe(s));
+</script>
+</body>
+</html>
