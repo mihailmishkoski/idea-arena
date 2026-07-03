@@ -7,8 +7,8 @@ namespace BusinessIdea.Web.Filters;
 
 /// <summary>
 /// Translates Application-layer exceptions into proper HTTP responses so
-/// controllers stay free of try/catch plumbing. Registered globally for MVC
-/// controllers only (Razor Pages are unaffected).
+/// controllers stay free of try/catch plumbing. Registered globally for all
+/// API controllers.
 /// </summary>
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {

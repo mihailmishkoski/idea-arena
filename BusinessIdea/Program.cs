@@ -23,29 +23,23 @@ builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 // --- Presentation -----------------------------------------------------------
 builder.Services.AddControllers(options =>
     options.Filters.Add<ApiExceptionFilterAttribute>());
-builder.Services.AddRazorPages();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Identity issues auth cookies; point its redirects at our Razor Pages and make
-// API calls return 401 instead of redirecting to the login page.
+// Identity issues auth cookies; the Angular SPA is the only client, so failed
+// auth returns plain status codes instead of redirecting to a login page.
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/Login";
-
     options.Events.OnRedirectToLogin = context =>
     {
-        if (context.Request.Path.StartsWithSegments("/api") ||
-            context.Request.Path.StartsWithSegments("/hubs"))
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        }
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
 
-        context.Response.Redirect(context.RedirectUri);
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
         return Task.CompletedTask;
     };
 });
@@ -82,15 +76,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapRazorPages();
 app.MapHub<BusinessIdea.Web.Hubs.ChatHub>("/hubs/chat");
 
 app.Run();
