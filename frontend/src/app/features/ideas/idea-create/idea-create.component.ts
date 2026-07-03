@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -10,6 +10,7 @@ import { IdeasService } from '../../../core/services/ideas.service';
     selector: 'app-idea-create',
     templateUrl: './idea-create.component.html',
     styleUrls: ['./idea-create.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class IdeaCreateComponent implements OnInit, OnDestroy {

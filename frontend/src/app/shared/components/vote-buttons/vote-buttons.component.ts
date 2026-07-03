@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { VoteDirection } from '../../../core/models/enums';
 
 /**
@@ -10,6 +10,7 @@ import { VoteDirection } from '../../../core/models/enums';
     selector: 'app-vote-buttons',
     templateUrl: './vote-buttons.component.html',
     styleUrls: ['./vote-buttons.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class VoteButtonsComponent {

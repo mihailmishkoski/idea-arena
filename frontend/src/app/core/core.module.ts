@@ -1,4 +1,4 @@
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CredentialsInterceptor } from './interceptors/credentials.interceptor';
 
@@ -8,7 +8,7 @@ import { CredentialsInterceptor } from './interceptors/credentials.interceptor';
  */
 @NgModule({ imports: [], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: CredentialsInterceptor, multi: true },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
     ] })
 export class CoreModule {
   constructor(@Optional() @SkipSelf() parent: CoreModule) {

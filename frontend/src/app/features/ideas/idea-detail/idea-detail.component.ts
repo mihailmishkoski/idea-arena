@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
@@ -25,6 +25,7 @@ interface MetricFilter {
     selector: 'app-idea-detail',
     templateUrl: './idea-detail.component.html',
     styleUrls: ['./idea-detail.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class IdeaDetailComponent implements OnInit, OnDestroy {

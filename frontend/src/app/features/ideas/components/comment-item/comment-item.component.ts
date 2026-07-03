@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { CommentDto, CommentNode } from '../../../../core/models/comment.model';
 import { VoteDirection } from '../../../../core/models/enums';
 
@@ -21,6 +21,7 @@ export interface CommentReplyEvent {
     selector: 'app-comment-item',
     templateUrl: './comment-item.component.html',
     styleUrls: ['./comment-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommentItemComponent {

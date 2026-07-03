@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { METRIC_LIST, MetricInfo } from '../../../../core/metric-info';
 import { CreateCommentRequest } from '../../../../core/models/comment.model';
@@ -12,6 +12,7 @@ import { IdeaMetric } from '../../../../core/models/enums';
     selector: 'app-comment-form',
     templateUrl: './comment-form.component.html',
     styleUrls: ['./comment-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommentFormComponent implements OnInit {

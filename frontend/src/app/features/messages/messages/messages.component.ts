@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { finalize, map, takeUntil } from 'rxjs/operators';
@@ -18,6 +18,7 @@ import { ChatService } from '../../../core/services/chat.service';
     selector: 'app-messages',
     templateUrl: './messages.component.html',
     styleUrls: ['./messages.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {

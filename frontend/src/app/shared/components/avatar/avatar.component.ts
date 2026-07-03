@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { avatarById, AvatarInfo } from '../../../core/avatars';
 
 /** A round avatar rendered from the built-in collection by its id. */
@@ -6,6 +6,7 @@ import { avatarById, AvatarInfo } from '../../../core/avatars';
     selector: 'app-avatar',
     templateUrl: './avatar.component.html',
     styleUrls: ['./avatar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AvatarComponent {

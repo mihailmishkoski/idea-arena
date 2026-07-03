@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -27,6 +28,7 @@ interface SortOption {
     selector: 'app-idea-list',
     templateUrl: './idea-list.component.html',
     styleUrls: ['./idea-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {

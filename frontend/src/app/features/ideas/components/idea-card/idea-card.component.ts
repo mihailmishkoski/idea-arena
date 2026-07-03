@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { BusinessIdeaSummary } from '../../../../core/models/business-idea.model';
 import { VoteDirection } from '../../../../core/models/enums';
@@ -13,6 +13,7 @@ import { HOT_SCORE_THRESHOLD, ideaExpiresAt } from '../../../../core/idea-rules'
     selector: 'app-idea-card',
     templateUrl: './idea-card.component.html',
     styleUrls: ['./idea-card.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class IdeaCardComponent {
