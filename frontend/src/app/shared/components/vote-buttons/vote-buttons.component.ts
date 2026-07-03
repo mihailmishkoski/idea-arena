@@ -7,9 +7,10 @@ import { VoteDirection } from '../../../core/models/enums';
  * The parent owns the actual voting call and state.
  */
 @Component({
-  selector: 'app-vote-buttons',
-  templateUrl: './vote-buttons.component.html',
-  styleUrls: ['./vote-buttons.component.scss'],
+    selector: 'app-vote-buttons',
+    templateUrl: './vote-buttons.component.html',
+    styleUrls: ['./vote-buttons.component.scss'],
+    standalone: false
 })
 export class VoteButtonsComponent {
   @Input() score = 0;

@@ -7,9 +7,10 @@ import { AVATARS, AvatarInfo, randomAvatarId } from '../../../core/avatars';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.scss'],
+    standalone: false
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   form!: FormGroup;

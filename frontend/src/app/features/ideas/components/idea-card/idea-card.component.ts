@@ -10,9 +10,10 @@ import { HOT_SCORE_THRESHOLD, ideaExpiresAt } from '../../../../core/idea-rules'
  * top closed idea gets a winner badge.
  */
 @Component({
-  selector: 'app-idea-card',
-  templateUrl: './idea-card.component.html',
-  styleUrls: ['./idea-card.component.scss'],
+    selector: 'app-idea-card',
+    templateUrl: './idea-card.component.html',
+    styleUrls: ['./idea-card.component.scss'],
+    standalone: false
 })
 export class IdeaCardComponent {
   @Input() idea!: BusinessIdeaSummary;

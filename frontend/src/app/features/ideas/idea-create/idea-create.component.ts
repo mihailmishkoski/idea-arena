@@ -7,9 +7,10 @@ import { CreateIdeaRequest } from '../../../core/models/business-idea.model';
 import { IdeasService } from '../../../core/services/ideas.service';
 
 @Component({
-  selector: 'app-idea-create',
-  templateUrl: './idea-create.component.html',
-  styleUrls: ['./idea-create.component.scss'],
+    selector: 'app-idea-create',
+    templateUrl: './idea-create.component.html',
+    styleUrls: ['./idea-create.component.scss'],
+    standalone: false
 })
 export class IdeaCreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;

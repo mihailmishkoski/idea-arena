@@ -15,9 +15,10 @@ import { ChatService } from '../../../core/services/chat.service';
  * the active chat on the right. New messages arrive live over the WebSocket.
  */
 @Component({
-  selector: 'app-messages',
-  templateUrl: './messages.component.html',
-  styleUrls: ['./messages.component.scss'],
+    selector: 'app-messages',
+    templateUrl: './messages.component.html',
+    styleUrls: ['./messages.component.scss'],
+    standalone: false
 })
 export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
   conversations: ConversationDto[] = [];

@@ -4,9 +4,10 @@ import { IdeaMetric } from '../../../core/models/enums';
 
 /** A coloured pill showing which topic a comment is anchored to. */
 @Component({
-  selector: 'app-metric-badge',
-  templateUrl: './metric-badge.component.html',
-  styleUrls: ['./metric-badge.component.scss'],
+    selector: 'app-metric-badge',
+    templateUrl: './metric-badge.component.html',
+    styleUrls: ['./metric-badge.component.scss'],
+    standalone: false
 })
 export class MetricBadgeComponent {
   @Input() metric: IdeaMetric = IdeaMetric.General;

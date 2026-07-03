@@ -24,9 +24,10 @@ interface SortOption {
 }
 
 @Component({
-  selector: 'app-idea-list',
-  templateUrl: './idea-list.component.html',
-  styleUrls: ['./idea-list.component.scss'],
+    selector: 'app-idea-list',
+    templateUrl: './idea-list.component.html',
+    styleUrls: ['./idea-list.component.scss'],
+    standalone: false
 })
 export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   ideas: BusinessIdeaSummary[] = [];

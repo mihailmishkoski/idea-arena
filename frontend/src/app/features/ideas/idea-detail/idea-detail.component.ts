@@ -22,9 +22,10 @@ interface MetricFilter {
 }
 
 @Component({
-  selector: 'app-idea-detail',
-  templateUrl: './idea-detail.component.html',
-  styleUrls: ['./idea-detail.component.scss'],
+    selector: 'app-idea-detail',
+    templateUrl: './idea-detail.component.html',
+    styleUrls: ['./idea-detail.component.scss'],
+    standalone: false
 })
 export class IdeaDetailComponent implements OnInit, OnDestroy {
   idea: BusinessIdeaDetail | null = null;

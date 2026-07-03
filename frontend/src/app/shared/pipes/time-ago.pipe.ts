@@ -1,7 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /** Formats an ISO timestamp as a compact Reddit-style relative time ("5h ago"). */
-@Pipe({ name: 'timeAgo' })
+@Pipe({
+    name: 'timeAgo',
+    standalone: false
+})
 export class TimeAgoPipe implements PipeTransform {
   transform(value: string | Date | null | undefined): string {
     if (!value) {

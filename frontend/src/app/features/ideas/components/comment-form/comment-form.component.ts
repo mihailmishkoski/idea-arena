@@ -9,9 +9,10 @@ import { IdeaMetric } from '../../../../core/models/enums';
  * the coloured badges (instead of a dropdown) and the comment is anchored to it.
  */
 @Component({
-  selector: 'app-comment-form',
-  templateUrl: './comment-form.component.html',
-  styleUrls: ['./comment-form.component.scss'],
+    selector: 'app-comment-form',
+    templateUrl: './comment-form.component.html',
+    styleUrls: ['./comment-form.component.scss'],
+    standalone: false
 })
 export class CommentFormComponent implements OnInit {
   @Input() submitting = false;

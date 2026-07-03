@@ -17,9 +17,10 @@ type HeaderMenu = 'notifications' | 'avatar' | null;
  * real time through the notification/chat stores.
  */
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   readonly currentUser$: Observable<CurrentUser | null> = this.auth.currentUser$;

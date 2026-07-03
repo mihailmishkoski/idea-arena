@@ -13,7 +13,10 @@ const LABELS: Record<IdeaMetric, string> = {
 };
 
 /** Turns an IdeaMetric enum value into a readable label. */
-@Pipe({ name: 'metricLabel' })
+@Pipe({
+    name: 'metricLabel',
+    standalone: false
+})
 export class MetricLabelPipe implements PipeTransform {
   transform(value: IdeaMetric): string {
     return LABELS[value] ?? 'General';

@@ -18,9 +18,10 @@ export interface CommentReplyEvent {
  * parent via events, which bubble up through each level of the thread.
  */
 @Component({
-  selector: 'app-comment-item',
-  templateUrl: './comment-item.component.html',
-  styleUrls: ['./comment-item.component.scss'],
+    selector: 'app-comment-item',
+    templateUrl: './comment-item.component.html',
+    styleUrls: ['./comment-item.component.scss'],
+    standalone: false
 })
 export class CommentItemComponent {
   @Input() comment!: CommentNode;
