@@ -27,7 +27,22 @@
 }
 
 .topbar__logo {
-  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--reddit-orange);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.topbar__name em {
+  font-style: normal;
+  color: var(--reddit-orange);
 }
 
 /* Search --------------------------------------------------------------------*/

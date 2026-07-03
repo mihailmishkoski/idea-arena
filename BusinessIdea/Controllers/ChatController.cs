@@ -1,4 +1,5 @@
 using BusinessIdea.Application.Features.Chat;
+using BusinessIdea.Application.Features.Chat.Commands.ApplyToCofound;
 using BusinessIdea.Application.Features.Chat.Commands.RequestChat;
 using BusinessIdea.Application.Features.Chat.Commands.RespondToChatRequest;
 using BusinessIdea.Application.Features.Chat.Commands.SendChatMessage;
@@ -18,6 +19,16 @@ public class ChatController : ApiControllerBase
     [HttpPost("requests")]
     public async Task<ActionResult<Guid>> RequestChat(RequestChatRequest request, CancellationToken ct)
         => Ok(await Mediator.Send(new RequestChatCommand(request.RecipientId, request.PostId), ct));
+
+    /// <summary>
+    /// Apply to co-found an idea: creates the request, delivers the structured
+    /// application as the first message, and notifies the author in-app + by email.
+    /// </summary>
+    [HttpPost("cofound")]
+    public async Task<ActionResult<Guid>> ApplyToCofound(ApplyCofoundRequest request, CancellationToken ct)
+        => Ok(await Mediator.Send(new ApplyToCofoundCommand(
+            request.PostId, request.Role, request.Skills,
+            request.Motivation, request.Availability, request.ContactLink), ct));
 
     /// <summary>Accept or decline a pending chat request (recipient only).</summary>
     [HttpPost("requests/{conversationId:guid}/respond")]

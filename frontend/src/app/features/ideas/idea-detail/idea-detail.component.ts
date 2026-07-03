@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { BusinessIdeaDetail } from '../../../core/models/business-idea.model';
+import { ChatRequestStatus, ConversationDto } from '../../../core/models/chat.model';
 import { CommentDto, CommentNode, CreateCommentRequest } from '../../../core/models/comment.model';
 import { IdeaMetric, VoteDirection } from '../../../core/models/enums';
 import {
@@ -37,6 +38,19 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
   filterMetric: IdeaMetric | null = null;
   currentUserId: string | null = null;
 
+  // Co-founder application state
+  showCofoundModal = false;
+  applyingCofound = false;
+  cofoundApplied = false;
+  cofoundError: string | null = null;
+  cofound = { role: '', skills: '', motivation: '', availability: '', contactLink: '' };
+
+  /** What already exists between me and the author (drives the CTA). */
+  cofoundState: 'none' | 'pending' | 'accepted' = 'none';
+  existingConversationId: string | null = null;
+
+  private conversationsSnapshot: ConversationDto[] = [];
+
   readonly Metric = IdeaMetric;
   readonly filters: MetricFilter[] = [
     { label: 'All', value: null },
@@ -69,6 +83,15 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
     this.auth.currentUser$
       .pipe(takeUntil(this.destroy$))
       .subscribe((user) => (this.currentUserId = user?.id ?? null));
+
+    // Keep the co-founder CTA in sync with what already exists between the
+    // current user and the author (pending request, open conversation…).
+    this.chatService.conversations$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((list) => {
+        this.conversationsSnapshot = list;
+        this.updateCofoundState();
+      });
 
     this.fetchData();
   }
@@ -171,18 +194,88 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .subscribe(() => this.fetchComments());
   }
 
-  /** Sends (or reuses) a chat request to the idea's author and opens Messages. */
+  /** Sends (or reuses) a plain chat request to the idea's author. */
   onChatWithAuthor(): void {
     if (!this.requireAuth() || !this.idea) {
       return;
     }
 
     this.chatService
-      .requestChat(this.idea.authorId, this.idea.id)
+      .requestChat(this.idea.authorId)
       .pipe(takeUntil(this.destroy$))
       .subscribe((conversationId) =>
         this.router.navigate(['/messages', conversationId])
       );
+  }
+
+  openCofoundModal(): void {
+    if (!this.requireAuth()) {
+      return;
+    }
+    this.cofoundError = null;
+    this.showCofoundModal = true;
+  }
+
+  closeCofoundModal(): void {
+    this.showCofoundModal = false;
+  }
+
+  /** Submits the application; the pitch fields travel to the author's email. */
+  onApplyCofound(): void {
+    if (!this.requireAuth() || !this.idea || this.applyingCofound) {
+      return;
+    }
+
+    this.applyingCofound = true;
+    this.cofoundError = null;
+
+    this.chatService
+      .applyCofound({
+        postId: this.idea.id,
+        role: this.cofound.role.trim() || null,
+        skills: this.cofound.skills.trim() || null,
+        motivation: this.cofound.motivation.trim() || null,
+        availability: this.cofound.availability.trim() || null,
+        contactLink: this.cofound.contactLink.trim() || null,
+      })
+      .pipe(
+        finalize(() => (this.applyingCofound = false)),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: () => {
+          this.cofoundApplied = true;
+          this.showCofoundModal = false;
+          // Refresh the conversation store so the CTA stays locked.
+          this.chatService.load().subscribe();
+        },
+        error: (err) => {
+          this.cofoundError =
+            err?.error?.errors?.PostId?.[0] ??
+            err?.error?.errors?.RecipientId?.[0] ??
+            'The application could not be sent. Please try again.';
+        },
+      });
+  }
+
+  /** Derives the CTA state from the loaded conversations. */
+  private updateCofoundState(): void {
+    const authorId = this.idea?.authorId;
+    if (!authorId) {
+      return;
+    }
+
+    const existing = this.conversationsSnapshot.find(
+      (c) => c.otherUserId === authorId && c.status !== ChatRequestStatus.Declined
+    );
+
+    this.existingConversationId = existing?.id ?? null;
+    this.cofoundState =
+      existing?.status === ChatRequestStatus.Pending
+        ? 'pending'
+        : existing?.status === ChatRequestStatus.Accepted
+          ? 'accepted'
+          : 'none';
   }
 
   onDeleteIdea(): void {
@@ -216,6 +309,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
         next: (result) => {
           this.idea = result.idea;
           this.setComments(result.comments);
+          this.updateCofoundState();
         },
         error: () => (this.error = true),
       });

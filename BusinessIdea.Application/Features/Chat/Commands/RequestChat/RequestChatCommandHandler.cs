@@ -1,6 +1,8 @@
 using BusinessIdea.Application.Common.Exceptions;
 using BusinessIdea.Application.Common.Interfaces;
+using BusinessIdea.Application.Common.Outbox;
 using BusinessIdea.Application.Features.Notifications;
+using BusinessIdea.Domain.Common;
 using BusinessIdea.Domain.Entities;
 using BusinessIdea.Domain.Enums;
 using MediatR;
@@ -60,6 +62,21 @@ public class RequestChatCommandHandler : IRequestHandler<RequestChatCommand, Gui
             return existingId;
         }
 
+        // Same server-side daily cap as co-founder applications: every new
+        // conversation emails a real person.
+        var since = DateTimeOffset.UtcNow.AddHours(-24);
+        var initiatedToday = await _context.Conversations
+            .CountAsync(c => c.RequesterId == userId && c.CreatedAtUtc > since, cancellationToken);
+        if (initiatedToday >= ChatRules.MaxInitiationsPerDay)
+        {
+            throw new ValidationException(new[]
+            {
+                new FluentValidation.Results.ValidationFailure(
+                    nameof(request.RecipientId),
+                    $"Daily limit reached ({ChatRules.MaxInitiationsPerDay} requests per 24h). Try again tomorrow."),
+            });
+        }
+
         var conversation = new Conversation
         {
             RequesterId = userId,
@@ -81,6 +98,11 @@ public class RequestChatCommandHandler : IRequestHandler<RequestChatCommand, Gui
             TargetId = conversation.Id,
         };
         _context.Notifications.Add(notification);
+
+        // Email to the recipient is sent by the worker; enqueued in the same
+        // transaction so it exists exactly when the request itself does.
+        _context.OutboxMessages.Add(OutboxMessageFactory.Create(
+            OutboxEventTypes.ChatRequested, new ChatRequestedPayload(conversation.Id)));
 
         await _context.SaveChangesAsync(cancellationToken);
 

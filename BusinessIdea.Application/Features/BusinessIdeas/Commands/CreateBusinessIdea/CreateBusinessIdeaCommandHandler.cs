@@ -1,5 +1,6 @@
 using BusinessIdea.Application.Common.Exceptions;
 using BusinessIdea.Application.Common.Interfaces;
+using BusinessIdea.Application.Common.Outbox;
 using BusinessIdea.Domain.Entities;
 using MediatR;
 
@@ -35,6 +36,12 @@ public class CreateBusinessIdeaCommandHandler : IRequestHandler<CreateBusinessId
         };
 
         _context.BusinessIdeas.Add(idea);
+
+        // Same transaction as the idea itself: the AI critic runs only for
+        // ideas that actually got committed (transactional outbox).
+        _context.OutboxMessages.Add(OutboxMessageFactory.Create(
+            OutboxEventTypes.IdeaCreated, new IdeaCreatedPayload(idea.Id)));
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return idea.Id;

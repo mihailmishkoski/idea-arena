@@ -1,5 +1,6 @@
 using BusinessIdea.Application.Common.Exceptions;
 using BusinessIdea.Application.Common.Interfaces;
+using BusinessIdea.Application.Common.Outbox;
 using BusinessIdea.Application.Features.Notifications;
 using BusinessIdea.Domain.Entities;
 using BusinessIdea.Domain.Enums;
@@ -60,6 +61,10 @@ public class RespondToChatRequestCommandHandler : IRequestHandler<RespondToChatR
                 TargetId = conversation.Id,
             };
             _context.Notifications.Add(notification);
+
+            // The worker emails the requester that their request was accepted.
+            _context.OutboxMessages.Add(OutboxMessageFactory.Create(
+                OutboxEventTypes.ChatAccepted, new ChatAcceptedPayload(conversation.Id)));
 
             await _context.SaveChangesAsync(cancellationToken);
 

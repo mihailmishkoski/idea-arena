@@ -1,10 +1,25 @@
+.back-link {
+  display: block;
+  max-width: 960px;
+  margin: 12px auto 0;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--meta);
+
+  &:hover {
+    text-decoration: none;
+    color: var(--text);
+  }
+}
+
 .chat-page {
   display: flex;
   gap: 12px;
   max-width: 960px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
-  height: calc(100vh - 48px - 40px);
+  padding: 12px 16px 40px;
+  height: calc(100vh - 48px - 52px);
   box-sizing: border-box;
 }
 

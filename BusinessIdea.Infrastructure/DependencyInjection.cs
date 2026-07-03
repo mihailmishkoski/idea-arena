@@ -1,7 +1,9 @@
 using BusinessIdea.Application.Common.Interfaces;
+using BusinessIdea.Application.Common.Models;
 using BusinessIdea.Infrastructure.Identity;
 using BusinessIdea.Infrastructure.Persistence;
 using BusinessIdea.Infrastructure.Persistence.Interceptors;
+using BusinessIdea.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +46,29 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adapters used when processing outbox side effects (email + AI critic).
+    /// Registered by the worker on top of <see cref="AddInfrastructureServices"/>.
+    /// </summary>
+    public static IServiceCollection AddOutboxSideEffectServices(
+        this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+        services.Configure<GeminiOptions>(configuration.GetSection(GeminiOptions.SectionName));
+
+        services.AddSingleton(new PublicAppUrls
+        {
+            BaseUrl = configuration["App:PublicBaseUrl"] ?? "http://localhost:4200",
+        });
+
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
+        services.AddScoped<IAiCriticUserProvider, AiCriticUserProvider>();
+        services.AddHttpClient<IAiCritic, GeminiAiCritic>(client =>
+            client.Timeout = TimeSpan.FromSeconds(60));
 
         return services;
     }

@@ -18,6 +18,7 @@ public interface IApplicationDbContext
     DbSet<Conversation> Conversations { get; }
     DbSet<ChatMessage> ChatMessages { get; }
     DbSet<Notification> Notifications { get; }
+    DbSet<OutboxMessage> OutboxMessages { get; }
 
     /// <summary>Read-only, Identity-free view of users for name projections.</summary>
     IQueryable<AuthorInfo> Authors { get; }

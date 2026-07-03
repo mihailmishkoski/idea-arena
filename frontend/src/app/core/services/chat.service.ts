@@ -5,6 +5,16 @@ import { map, tap } from 'rxjs/operators';
 import { API_BASE } from '../api.config';
 import { ChatMessageDto, ChatRequestStatus, ConversationDto } from '../models/chat.model';
 
+/** Payload of a co-founder application; every pitch field is optional. */
+export interface CofoundApplication {
+  postId: string;
+  role?: string | null;
+  skills?: string | null;
+  motivation?: string | null;
+  availability?: string | null;
+  contactLink?: string | null;
+}
+
 /**
  * Holds the user's conversations and streams incoming realtime messages.
  * The envelope badge combines unread messages and incoming pending requests.
@@ -37,6 +47,11 @@ export class ChatService {
 
   requestChat(recipientId: string, postId?: string | null): Observable<string> {
     return this.http.post<string>(`${this.baseUrl}/requests`, { recipientId, postId });
+  }
+
+  /** Submits a co-founder application; the fields become the first message. */
+  applyCofound(application: CofoundApplication): Observable<string> {
+    return this.http.post<string>(`${this.baseUrl}/cofound`, application);
   }
 
   respond(conversationId: string, accept: boolean): Observable<void> {
