@@ -16,5 +16,8 @@ public enum NotificationType
     ChatAccepted = 3,
 
     /// <summary>A new chat message arrived.</summary>
-    NewMessage = 4
+    NewMessage = 4,
+
+    /// <summary>Your idea won its competition week.</summary>
+    IdeaWon = 5
 }

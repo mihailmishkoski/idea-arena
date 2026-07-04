@@ -371,3 +371,13 @@
     pointer-events: none;
   }
 }
+
+.post__author-link {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

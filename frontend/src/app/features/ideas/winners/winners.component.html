@@ -1,0 +1,53 @@
+<div class="page">
+  <a class="back-link" routerLink="/">← Back to feed</a>
+
+  <header class="hof card">
+    <h1 class="hof__title">🏆 Hall of Fame</h1>
+    <p class="hof__subtitle">
+      Every idea competes for 14 days. Each week, the highest-scoring idea whose
+      run ended earns a permanent place here.
+    </p>
+  </header>
+
+  @if (!loading && winners.length === 0) {
+    <div class="card hof-empty">
+      No winners yet — the first competition week hasn't finished. Check back soon!
+    </div>
+  }
+
+  @for (winner of winners; track trackByWinnerId($index, winner)) {
+    <article class="winner card">
+      <div class="winner__week">
+        <span class="winner__trophy">🏆</span>
+        <span>Week of {{ winner.periodStartUtc | date: 'MMM d' }} –
+          {{ winner.periodEndUtc | date: 'MMM d, y' }}</span>
+      </div>
+      <div class="winner__body">
+        @if (winner.postId) {
+          <a class="winner__name" [routerLink]="['/ideas', winner.postId]">{{ winner.postName }}</a>
+        } @else {
+          <span class="winner__name winner__name--gone">{{ winner.postName }}</span>
+        }
+        <div class="winner__meta">
+          <app-avatar [avatarId]="winner.authorAvatar" [size]="20"></app-avatar>
+          <span>by
+            <a class="winner__author" [routerLink]="['/users', winner.authorId]">u/{{ winner.authorName || 'member' }}</a>
+          </span>
+        </div>
+      </div>
+      <div class="winner__stats">
+        <span class="winner__score" title="Final score">▲ {{ winner.score }}</span>
+        <span class="winner__detail">{{ winner.upVotes }} up · {{ winner.downVotes }} down</span>
+        <span class="winner__detail">{{ winner.commentCount }} comments</span>
+      </div>
+    </article>
+  }
+
+  @if (loading) {
+    <app-spinner label="Loading winners…"></app-spinner>
+  }
+
+  @if (!loading && hasNextPage) {
+    <button type="button" class="hof-more" (click)="loadMore()">Show earlier weeks</button>
+  }
+</div>

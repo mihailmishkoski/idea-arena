@@ -10,7 +10,7 @@
   <div class="comment__body">
     <div class="comment__meta">
       <app-avatar [avatarId]="comment.authorAvatar" [size]="20"></app-avatar>
-      <span class="comment__author">{{ authorHandle }}</span>
+      <a class="comment__author" [routerLink]="['/users', comment.authorId]">{{ authorHandle }}</a>
       <span class="comment__dot">·</span>
       <span>{{ comment.createdAtUtc | timeAgo }}</span>
       <app-metric-badge [metric]="comment.targetMetric"></app-metric-badge>

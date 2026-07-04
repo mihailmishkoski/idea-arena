@@ -40,6 +40,11 @@
 .idea-card__author {
   font-weight: 700;
   color: #1a1a1b;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .idea-card__dot {

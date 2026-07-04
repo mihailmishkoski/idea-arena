@@ -1,0 +1,49 @@
+<div class="page">
+  <a class="back-link" routerLink="/">← Back to feed</a>
+
+  @if (loading) {
+    <app-spinner label="Loading profile…"></app-spinner>
+  }
+
+  @if (error && !loading) {
+    <div class="card profile-error">This member could not be found.</div>
+  }
+
+  @if (profile; as member) {
+    <header class="profile card">
+      <app-avatar [avatarId]="member.avatarId" [size]="64"></app-avatar>
+      <div class="profile__ident">
+        <h1 class="profile__name">u/{{ member.displayName || 'member' }}</h1>
+        @if (member.wins > 0) {
+          <span class="profile__wins" title="Competition weeks won">
+            🏆 {{ member.wins }} {{ member.wins === 1 ? 'win' : 'wins' }}
+          </span>
+        }
+      </div>
+      <div class="profile__stats">
+        <div class="stat">
+          <span class="stat__value">{{ member.karma }}</span>
+          <span class="stat__label">karma</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">{{ member.ideasCount }}</span>
+          <span class="stat__label">{{ member.ideasCount === 1 ? 'idea' : 'ideas' }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">{{ member.commentsCount }}</span>
+          <span class="stat__label">comments</span>
+        </div>
+      </div>
+    </header>
+
+    <h2 class="section-title">Recent ideas</h2>
+
+    @if (member.recentIdeas.length === 0) {
+      <div class="card profile-empty">No ideas posted yet.</div>
+    }
+
+    @for (idea of member.recentIdeas; track idea.id) {
+      <app-idea-card [idea]="idea" [closed]="isClosed(idea.createdAtUtc)"></app-idea-card>
+    }
+  }
+</div>

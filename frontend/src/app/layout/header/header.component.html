@@ -17,6 +17,8 @@
       />
     </form>
 
+    <a class="topbar__hof" routerLink="/winners" title="Hall of Fame">🏆</a>
+
     @if (currentUser$ | async; as user) {
       <div class="topbar__actions">
         <a class="btn btn--primary topbar__create" routerLink="/submit">+ Create</a>

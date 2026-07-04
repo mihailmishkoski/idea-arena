@@ -20,7 +20,11 @@
   <div class="idea-card__body">
     <div class="idea-card__meta">
       <app-avatar [avatarId]="idea.authorAvatar" [size]="20"></app-avatar>
-      <span class="idea-card__author">u/{{ idea.authorName || 'member' }}</span>
+      <a
+        class="idea-card__author"
+        [routerLink]="['/users', idea.authorId]"
+        (click)="$event.stopPropagation()"
+        >u/{{ idea.authorName || 'member' }}</a>
       <span class="idea-card__dot">·</span>
       <span>{{ idea.createdAtUtc | timeAgo }}</span>
 

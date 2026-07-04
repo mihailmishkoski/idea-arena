@@ -124,6 +124,22 @@
   }
 }
 
+/* Hall of Fame link ----------------------------------------------------------*/
+.topbar__hof {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 17px;
+  text-decoration: none;
+
+  &:hover {
+    background: #f2f4f5;
+  }
+}
+
 /* Icon buttons with badges ---------------------------------------------------*/
 .icon-btn {
   position: relative;

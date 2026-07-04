@@ -17,4 +17,7 @@ public static class OutboxEventTypes
 
     /// <summary>A co-founder application was submitted → rich email to the idea's author.</summary>
     public const string CofounderApplied = "cofounder-applied";
+
+    /// <summary>An idea won its competition week → congratulate the author by email.</summary>
+    public const string IdeaWon = "idea-won";
 }

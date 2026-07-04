@@ -24,6 +24,11 @@
 .comment__author {
   font-weight: 700;
   color: var(--text);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .comment__dot {

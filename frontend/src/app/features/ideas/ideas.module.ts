@@ -7,6 +7,8 @@ import { IdeaCreateComponent } from './idea-create/idea-create.component';
 import { IdeaDetailComponent } from './idea-detail/idea-detail.component';
 import { IdeaListComponent } from './idea-list/idea-list.component';
 import { IdeasRoutingModule } from './ideas-routing.module';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { WinnersComponent } from './winners/winners.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,8 @@ import { IdeasRoutingModule } from './ideas-routing.module';
     IdeaCardComponent,
     CommentItemComponent,
     CommentFormComponent,
+    WinnersComponent,
+    UserProfileComponent,
   ],
   imports: [SharedModule, IdeasRoutingModule],
 })

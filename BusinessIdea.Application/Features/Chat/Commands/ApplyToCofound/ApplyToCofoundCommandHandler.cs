@@ -119,7 +119,7 @@ public class ApplyToCofoundCommandHandler : IRequestHandler<ApplyToCofoundComman
     internal static string BuildApplicationText(string postName, ApplyToCofoundCommand request)
     {
         var builder = new StringBuilder();
-        builder.Append("🤝 Co-founder application — “").Append(postName).Append('”');
+        builder.Append("Co-founder application — “").Append(postName).Append('”');
 
         AppendField(builder, "Role I can take", request.Role);
         AppendField(builder, "Skills & experience", request.Skills);

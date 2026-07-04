@@ -1,4 +1,5 @@
 using BusinessIdea.Application.Features.Outbox;
+using BusinessIdea.Application.Features.Winners;
 using BusinessIdea.Infrastructure;
 using BusinessIdea.Worker;
 
@@ -16,8 +17,12 @@ builder.Services.AddScoped<IOutboxProcessor, IdeaCreatedProcessor>();
 builder.Services.AddScoped<IOutboxProcessor, ChatRequestedProcessor>();
 builder.Services.AddScoped<IOutboxProcessor, ChatAcceptedProcessor>();
 builder.Services.AddScoped<IOutboxProcessor, CofounderAppliedProcessor>();
+builder.Services.AddScoped<IOutboxProcessor, IdeaWonProcessor>();
+
+builder.Services.AddScoped<IWinnerDeclarationService, WinnerDeclarationService>();
 
 builder.Services.AddHostedService<OutboxProcessorService>();
+builder.Services.AddHostedService<WinnerDeclarationHostedService>();
 
 var host = builder.Build();
 host.Run();

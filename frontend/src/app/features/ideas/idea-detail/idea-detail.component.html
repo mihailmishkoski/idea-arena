@@ -24,7 +24,9 @@
       <div class="post__main">
         <div class="post__meta">
           <app-avatar [avatarId]="post.authorAvatar" [size]="22"></app-avatar>
-          <span>Posted by u/{{ post.authorName || 'member' }}</span>
+          <span>Posted by
+            <a class="post__author-link" [routerLink]="['/users', post.authorId]">u/{{ post.authorName || 'member' }}</a>
+          </span>
           <span class="post__dot">·</span>
           <span>{{ post.createdAtUtc | timeAgo }}</span>
           @if (isAuthenticated && !isAuthor) {

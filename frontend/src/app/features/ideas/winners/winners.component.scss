@@ -1,0 +1,157 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.back-link {
+  color: var(--meta, #7c7c7c);
+  font-size: 13px;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.hof {
+  padding: 20px;
+  background: linear-gradient(135deg, #fff8e7 0%, #ffffff 60%);
+
+  &__title {
+    margin: 0 0 6px;
+    font-size: 22px;
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--meta, #7c7c7c);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.hof-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--meta, #7c7c7c);
+  font-size: 14px;
+}
+
+.winner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+
+  &__week {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 200px;
+    color: var(--meta, #7c7c7c);
+    font-size: 13px;
+  }
+
+  &__trophy {
+    font-size: 18px;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    display: block;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1c1c1c;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--reddit-orange, #ff4500);
+    }
+
+    &--gone {
+      color: var(--meta, #7c7c7c);
+      cursor: default;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    color: var(--meta, #7c7c7c);
+    font-size: 13px;
+  }
+
+  &__author {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  &__score {
+    font-weight: 700;
+    color: var(--reddit-orange, #ff4500);
+  }
+
+  &__detail {
+    color: var(--meta, #7c7c7c);
+    font-size: 12px;
+  }
+}
+
+.hof-more {
+  align-self: center;
+  padding: 8px 20px;
+  border: 1px solid var(--border-light, #ccc);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+
+  &:hover {
+    border-color: var(--reddit-orange, #ff4500);
+    color: var(--reddit-orange, #ff4500);
+  }
+}
+
+@media (max-width: 600px) {
+  .winner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    &__week {
+      flex-basis: auto;
+    }
+
+    &__stats {
+      flex-direction: row;
+      gap: 10px;
+    }
+  }
+}

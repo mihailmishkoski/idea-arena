@@ -28,7 +28,8 @@ public static class ApplicationDbContextMock
         List<ChatMessage>? chatMessages = null,
         List<Notification>? notifications = null,
         List<OutboxMessage>? outboxMessages = null,
-        List<AuthorInfo>? authors = null)
+        List<AuthorInfo>? authors = null,
+        List<WeeklyWinner>? weeklyWinners = null)
     {
         Mock<IApplicationDbContext> context = new Mock<IApplicationDbContext>();
 
@@ -40,6 +41,7 @@ public static class ApplicationDbContextMock
         context.Setup(x => x.ChatMessages).Returns(BuildDbSet(chatMessages ?? new List<ChatMessage>()).Object);
         context.Setup(x => x.Notifications).Returns(BuildDbSet(notifications ?? new List<Notification>()).Object);
         context.Setup(x => x.OutboxMessages).Returns(BuildDbSet(outboxMessages ?? new List<OutboxMessage>()).Object);
+        context.Setup(x => x.WeeklyWinners).Returns(BuildDbSet(weeklyWinners ?? new List<WeeklyWinner>()).Object);
         context.Setup(x => x.Authors).Returns((authors ?? new List<AuthorInfo>()).AsQueryable().BuildMock());
         context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
