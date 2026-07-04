@@ -182,6 +182,7 @@
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
     <a href="#architecture">Architecture</a>
+    <a href="#outbox">Background work</a>
     <a href="#realtime">Realtime</a>
     <a href="#model">Data model</a>
     <a href="#stack">Tech stack</a>
@@ -206,7 +207,7 @@
   <section class="card" id="idea">
     <h2><span class="hash">#</span>The idea</h2>
     <p>Everybody has a business idea. Almost nobody has a cheap, fast way to find out whether it survives contact with other people. Asking friends produces politeness, not truth; building an MVP costs months. <strong>Idea Arena is the step in between:</strong> post the idea, let a crowd of strangers pick it apart, and watch an honest score emerge from votes and arguments.</p>
-    <p>Three design decisions make the feedback honest:</p>
+    <p>Four design decisions make the feedback honest:</p>
     <h3>1. Every idea is a structured pitch, not a wall of text</h3>
     <p>An idea is submitted through fixed fields — the same questions an investor would ask:</p>
     <p>
@@ -222,7 +223,9 @@
     <h3>2. Feedback is aimed, not general</h3>
     <p>Comments carry a <strong>metric badge</strong>: a thread can target the exit strategy specifically, or the problem statement, or the idea as a whole. Instead of one noisy pile of replies, the author sees exactly <em>which part</em> of the pitch is weak. Replies inherit the badge of their parent, so each discussion stays on topic.</p>
     <h3>3. The clock creates urgency</h3>
-    <p>An idea lives in the arena for exactly <strong>14 days</strong>. While active, it competes in the feed for votes and discussion. When time runs out it leaves the feed, its score freezes, and it is ranked among the retired ideas — the top of that ranking is the <strong>Winners</strong> board. A deadline means voting momentum matters, the feed never silts up with zombies, and "winning" actually means something.</p>
+    <p>An idea lives in the arena for exactly <strong>14 days</strong>. While active, it competes in the feed for votes and discussion. When time runs out it leaves the feed and its score freezes. Every week, the highest-scoring idea whose run just ended is crowned <strong>winner of the week</strong>: its author is notified and congratulated by email, and the idea earns a permanent place in the <strong>Hall of Fame</strong>. A deadline means voting momentum matters, the feed never silts up with zombies, and "winning" actually means something.</p>
+    <h3>4. Nobody pitches into silence</h3>
+    <p>The moment an idea is posted, an <strong>AI critic</strong> reads the pitch and opens the discussion with three tough, investor-style questions — each aimed at the metric it challenges. Every idea starts with a debate already running, and authors get pushed on their weakest points from minute one.</p>
   </section>
 
   <!-- ============ HOW IT WORKS ============ -->
@@ -231,11 +234,12 @@
     <ol class="steps">
       <li><b>Sign up &amp; pick an avatar</b> Create an account, choose an avatar from the built-in collection, and you're in the arena.</li>
       <li><b>Post your idea</b> Fill in the pitch: name, UVP, problem and solution are required; competition, income strategy, exit strategy and a video pitch link are optional ammunition.</li>
+      <li><b>The AI critic strikes first</b> Within seconds a background worker asks the resident AI critic for three hard, metric-tagged questions — your pitch gets grilled before the first human arrives.</li>
       <li><b>The community votes</b> Reddit rules: one account, one vote per idea or comment. Press the same arrow again to take it back; press the other one to flip.</li>
       <li><b>Discussion drills into metrics</b> Commenters tag their thread with the metric it targets. Threads nest infinitely, and every reply stays bound to its topic.</li>
       <li><b>Fourteen days on the clock</b> Sort the feed by Top, New, Best (engagement), Controversial or Old while the battle runs — or search the arena by name, UVP and problem text.</li>
-      <li><b>Winners are crowned</b> After expiry the final score is frozen. The Winners view ranks all retired ideas; the top spot is the reigning champion.</li>
-      <li><b>Take it further, privately</b> Interested in an idea (or its author)? Send a <strong>chat request</strong>. If they accept, a private realtime conversation opens — the deal room after the pitch.</li>
+      <li><b>Winners are crowned weekly</b> After expiry the final score is frozen. Each week the top idea whose run just ended is declared winner — the author gets a notification and a congratulation email, and the idea enters the Hall of Fame forever.</li>
+      <li><b>Take it further, privately</b> Interested in an idea (or its author)? Send a <strong>chat request</strong> — or go all in and <strong>apply to co-found</strong>: your application lands in the author's inbox, and in the app they simply accept or decline. If they accept, a private realtime conversation opens — the deal room after the pitch.</li>
     </ol>
   </section>
 
@@ -245,11 +249,15 @@
     <div class="grid">
       <div class="tile"><b>Reddit-style voting</b><p>Toggle &amp; flip semantics, one vote per user, on both ideas and comments.</p></div>
       <div class="tile"><b>Metric-targeted threads</b><p>Comment threads aimed at a specific pitch field, with color-coded badges.</p></div>
-      <div class="tile"><b>14-day idea lifecycle</b><p>Ideas expire out of the feed; scores freeze; winners are ranked forever.</p></div>
+      <div class="tile"><b>AI critic on every idea</b><p>An LLM seeds three tough, metric-tagged questions the moment an idea is posted.</p></div>
+      <div class="tile"><b>14-day idea lifecycle</b><p>Ideas expire out of the feed; scores freeze; a winner is crowned every week.</p></div>
+      <div class="tile"><b>Hall of Fame</b><p>Weekly winners are snapshotted forever — even if the original post is deleted.</p></div>
+      <div class="tile"><b>Public profiles</b><p>Karma, wins, idea &amp; comment counts and recent ideas — every username is a door.</p></div>
       <div class="tile"><b>Six feed sorts + search</b><p>Top, New, Best, Controversial, Old, Winners — plus free-text search.</p></div>
       <div class="tile"><b>Infinite scroll</b><p>The feed streams in pages of 10 as you scroll, no pagination buttons.</p></div>
-      <div class="tile"><b>Chat with consent</b><p>Private chat opens only after a request is accepted — no unsolicited DMs.</p></div>
-      <div class="tile"><b>Live notifications</b><p>Chat requests, acceptances and messages arrive instantly over WebSockets.</p></div>
+      <div class="tile"><b>Co-founder applications</b><p>Apply in one click; the pitch travels by email, the author accepts or declines in-app.</p></div>
+      <div class="tile"><b>Chat with consent</b><p>Private chat opens only after a request is accepted — no unsolicited DMs, capped at 10 new requests a day.</p></div>
+      <div class="tile"><b>Live notifications + email</b><p>In-app over WebSockets; chat requests, acceptances and wins also land in your inbox.</p></div>
       <div class="tile"><b>Avatars</b><p>Pick an identity from the built-in avatar set at registration, change it anytime.</p></div>
     </div>
   </section>
@@ -260,7 +268,7 @@
     <p>The backend follows <strong>Clean Architecture</strong>: dependencies point inward only, so business rules never know what database or web framework surrounds them.</p>
     <div class="diagram">
       <div class="layers">
-        <div class="layer l-spa"><b>Angular 16 SPA</b><small>components · services · RxJS state · SignalR client</small></div>
+        <div class="layer l-spa"><b>Angular 22 SPA</b><small>components · services · RxJS state · SignalR client</small></div>
         <div class="layer-arrow">▼ &nbsp;HTTP /api (cookie auth) &nbsp;+&nbsp; WebSocket /hubs/chat &nbsp;▼</div>
         <div class="layer l-web"><b>Web (ASP.NET Core 8)</b><small>thin controllers · SignalR hub · exception filter · Identity cookie auth</small></div>
         <div class="layer-arrow">▼ &nbsp;sends commands / queries via MediatR&nbsp; ▼</div>
@@ -268,7 +276,9 @@
         <div class="layer-arrow">▼ &nbsp;pure business objects&nbsp; ▼</div>
         <div class="layer l-domain"><b>Domain</b><small>entities · enums · idea rules — zero dependencies</small></div>
         <div class="layer-arrow">▲ &nbsp;Infrastructure implements the Application ports&nbsp; ▲</div>
-        <div class="layer l-infra"><b>Infrastructure</b><small>EF Core + Npgsql · ASP.NET Identity · migrations · seeder → PostgreSQL</small></div>
+        <div class="layer l-infra"><b>Infrastructure</b><small>EF Core + Npgsql · ASP.NET Identity · migrations · seeder · SMTP email · AI critic adapter → PostgreSQL</small></div>
+        <div class="layer-arrow">◄ &nbsp;a separate <b>Worker</b> process shares Application + Infrastructure and drains the outbox&nbsp; ►</div>
+        <div class="layer l-web"><b>Worker (.NET Worker Service)</b><small>outbox processor (5s poll, retries, dead-letter) · weekly winner declaration (hourly)</small></div>
       </div>
     </div>
     <h3>CQRS with MediatR</h3>
@@ -277,6 +287,38 @@
     <p>Handlers depend on interfaces, never on technology: <code>IApplicationDbContext</code> hides EF Core, <code>ICurrentUserService</code> hides the auth cookie, <code>IRealtimeNotifier</code> hides SignalR. Swap PostgreSQL or the realtime transport tomorrow — the business layer doesn't change a line.</p>
     <h3>Authentication</h3>
     <p>Classic and boring on purpose: ASP.NET Identity issues an <strong>encrypted, HTTP-only cookie</strong> at login. The browser attaches it to every API call <em>and</em> to the WebSocket handshake, so one mechanism guards both worlds. Unauthenticated API calls get a clean <code>401</code> — no redirects, the SPA owns all navigation.</p>
+  </section>
+
+  <!-- ============ BACKGROUND WORK ============ -->
+  <section class="card" id="outbox">
+    <h2><span class="hash">#</span>Background work: the transactional outbox</h2>
+    <p>Some things shouldn't happen inside a web request: sending an email, calling an LLM. They're slow, and they can fail halfway. Idea Arena moves them to a separate <strong>worker process</strong> using the <strong>transactional outbox pattern</strong> — the classic answer to "how do I make sure the side effect happens <em>exactly when</em> the business change does?"</p>
+    <div class="diagram">
+<div class="flow">API request                 PostgreSQL                     Worker process
+  │                            │                                │
+  │ handler saves, in ONE      │                                │
+  │ transaction:               │                                │
+  ├───────────────────────────►│  ┌ business row (idea, chat…)  │
+  │                            │  └ OutboxMessages row          │
+  │ HTTP 200 (fast — no SMTP,  │                                │ polls every 5s
+  │ no LLM in the request)     │◄───────────────────────────────┤ WHERE unprocessed
+  │                            │                                │
+  │                            │        dispatch by event type: │
+  │                            │   idea-created → AI critic     │
+  │                            │   chat-requested → email       │
+  │                            │   chat-accepted  → email       │
+  │                            │   cofounder-applied → email    │
+  │                            │   idea-won → email             │
+  │                            │◄───────────────────────────────┤ mark processed
+  │                            │   (5 failed tries → dead-letter with the error kept)</div>
+    </div>
+    <p>Why it's built this way:</p>
+    <ul>
+      <li><strong>Atomicity.</strong> The event row is written in the <em>same database transaction</em> as the idea or chat request itself — either both exist or neither does. No "idea saved but the AI critic never heard about it."</li>
+      <li><strong>Resilience.</strong> If the worker is down, nothing is lost — events queue up in the table and are processed the moment it returns. Failures retry up to five times, then stay dead-lettered with the error message for inspection.</li>
+      <li><strong>Idempotency.</strong> Processors guard against double work (a retry never posts the AI critic's questions twice), and the winner declaration backfills any weeks missed during downtime — silently, so nobody gets congratulated for ancient history.</li>
+    </ul>
+    <p>The same worker also runs the <strong>weekly winner declaration</strong>: every hour it checks for competition weeks that have finished without a crowned winner, snapshots the top idea into the <code>WeeklyWinners</code> table, and queues the congratulation email through — of course — the outbox.</p>
   </section>
 
   <!-- ============ REALTIME ============ -->
@@ -316,7 +358,9 @@
       <tr><td><strong>PostVote / CommentVote</strong></td><td>Up/down votes.</td><td>Unique index on (target, user) — one vote per account, enforced by the database itself.</td></tr>
       <tr><td><strong>Conversation</strong></td><td>A chat channel between two users.</td><td>Born as a <em>request</em> (Pending → Accepted/Declined); messages flow only after acceptance.</td></tr>
       <tr><td><strong>ChatMessage</strong></td><td>One message in a conversation.</td><td>Read/unread state drives the per-conversation badge.</td></tr>
-      <tr><td><strong>Notification</strong></td><td>The bell: chat requests, acceptances…</td><td>Text is pre-rendered server-side; delivered live via WebSocket <em>and</em> persisted.</td></tr>
+      <tr><td><strong>Notification</strong></td><td>The bell: comments, replies, chat requests, acceptances, wins.</td><td>Text is pre-rendered server-side; delivered live via WebSocket <em>and</em> persisted.</td></tr>
+      <tr><td><strong>OutboxMessage</strong></td><td>A pending side effect: event type + JSON payload.</td><td>Written in the same transaction as the business change; the worker drains it with retries and dead-lettering.</td></tr>
+      <tr><td><strong>WeeklyWinner</strong></td><td>One Hall of Fame entry per competition week.</td><td>Snapshots name, author and final tallies — history survives even if the winning post is deleted (FK is <code>SET NULL</code>).</td></tr>
       <tr><td><strong>ApplicationUser</strong></td><td>Identity account + display name + avatar.</td><td>Kept out of the Application layer — read models see a slim <code>AuthorInfo</code> projection only.</td></tr>
     </table>
     </div>
@@ -329,11 +373,13 @@
     <div class="table-wrap">
     <table>
       <tr><th>Layer</th><th>Technology</th></tr>
-      <tr><td>Frontend</td><td>Angular 16 (modules, lazy features), RxJS 7, SCSS, <code>@microsoft/signalr</code></td></tr>
+      <tr><td>Frontend</td><td>Angular 22 (modules, lazy features, esbuild builder), RxJS 7, SCSS, <code>@microsoft/signalr</code></td></tr>
       <tr><td>API</td><td>ASP.NET Core 8, MediatR (CQRS), FluentValidation, SignalR</td></tr>
+      <tr><td>Background</td><td>.NET Worker Service, transactional outbox, MailKit (SMTP), Google Gemini as the AI critic</td></tr>
       <tr><td>Auth</td><td>ASP.NET Identity, encrypted HTTP-only cookie</td></tr>
       <tr><td>Data</td><td>PostgreSQL, EF Core 8 + Npgsql, code-first migrations</td></tr>
-      <tr><td>Dev experience</td><td>Angular dev-server proxy (same-origin cookies + WebSocket), Swagger, database seeder, docker-compose for Postgres</td></tr>
+      <tr><td>Tests</td><td>xUnit + Moq + MockQueryable — every command handler and outbox processor covered (76 tests)</td></tr>
+      <tr><td>Dev experience</td><td>Angular dev-server proxy (same-origin cookies + WebSocket), Swagger, database seeder, smtp4dev inbox, docker-compose for Postgres</td></tr>
     </table>
     </div>
   </section>
@@ -341,7 +387,7 @@
   <!-- ============ RUN LOCALLY ============ -->
   <section class="card" id="run">
     <h2><span class="hash">#</span>Run it locally</h2>
-    <p><strong>Prerequisites:</strong> .NET 8 SDK, Node 18+, and PostgreSQL (native install, or <code>docker compose up -d</code> with a <code>.env</code> file — see <code>.env.example</code>).</p>
+    <p><strong>Prerequisites:</strong> .NET 8 SDK, Node 22+, and PostgreSQL (native install, or <code>docker compose up -d</code> with a <code>.env</code> file — see <code>.env.example</code>). For the AI critic, put a Gemini API key in user-secrets as <code>Gemini:ApiKey</code> (optional — everything else works without it).</p>
     <p><strong>1 — Configure the database password</strong> (stored in user-secrets, never in the repo):</p>
     <pre><code>cd BusinessIdea
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
@@ -349,14 +395,20 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
     <p><strong>2 — Start the API</strong> (applies migrations automatically on startup):</p>
     <pre><code>cd BusinessIdea
 dotnet run          # optionally: dotnet run -- seed  (mock data, then exits)</code></pre>
-    <p><strong>3 — Start the SPA</strong> (proxies /api and /hubs to the backend):</p>
+    <p><strong>3 — Start the worker</strong> (emails, AI critic, weekly winners):</p>
+    <pre><code>cd BusinessIdea.Worker
+dotnet run</code></pre>
+    <p><strong>4 — Start the SPA</strong> (proxies /api and /hubs to the backend):</p>
     <pre><code>cd frontend
 npm install
 npx ng serve        # → http://localhost:4200</code></pre>
+    <p><strong>Optional — a local inbox</strong> to see the emails the worker sends:</p>
+    <pre><code>dotnet tool install -g Rnwood.Smtp4dev
+smtp4dev --db="" --smtpport 25 --urls http://localhost:5010   # → inbox UI</code></pre>
   </section>
 
   <footer>
-    <span class="up">▲</span> Idea Arena — a portfolio project · .NET 8 · Angular 16 · PostgreSQL · SignalR
+    <span class="up">▲</span> Idea Arena — a portfolio project · .NET 8 · Angular 22 · PostgreSQL · SignalR
   </footer>
 </main>
 
