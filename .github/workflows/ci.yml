@@ -1,96 +1,55 @@
-# The workflow's name — shown in the Actions tab and on status badges.
 name: CI
 
-# ============ WHEN does it run? (Azure DevOps: `trigger:` / `pr:`) ============
 on:
-  # Direct pushes to the long-lived branches re-verify them (e.g. right after
-  # a PR merge lands). feature/** and fix/** branches run on every push too,
-  # so you get feedback while working, even before opening a PR.
   push:
     branches: [master, dev, 'feature/**', 'fix/**']
-  # Every pull request TARGETING master or dev gets built & tested before
-  # merge — this is what puts the green check / red cross on the PR page.
-  # NOTE: the filter is the TARGET branch; the code being tested is the
-  # FEATURE branch of the PR. So feature branches are covered by this —
-  # no need to list them under `push:` (that would run everything twice).
   pull_request:
     branches: [master, dev]
 
-# ============ WHAT runs? (Azure DevOps: `jobs:`) ==============================
-# Jobs run IN PARALLEL by default, each on its own fresh virtual machine.
-# Backend and frontend don't depend on each other, so parallel = faster CI.
 jobs:
-
-  # ---------------------------------------------------------------- backend --
   backend:
-    # Human-readable name shown in the PR checks list.
     name: Backend build & tests
-    # The VM image (Azure DevOps: `pool: vmImage`). Linux is the cheapest and
-    # fastest; .NET 8 builds identically on it.
     runs-on: ubuntu-latest
 
     steps:
-      # `uses:` pulls a reusable action from the marketplace
-      # (Azure DevOps equivalent: a built-in task like `Checkout@1`).
-      # This one clones the repo into the VM.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      # Installs the .NET SDK on the VM (Azure DevOps: `UseDotNet@2`).
       - name: Set up .NET 8
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
-      # `run:` executes a shell command — the same commands you use locally,
-      # which is the golden rule of CI: if it works on your machine with these
-      # commands, it works here.
       - name: Restore dependencies
         run: dotnet restore
 
-      # --no-restore skips the restore we just did (saves time).
-      # Building the whole solution compiles Web + Worker + Tests together.
       - name: Build solution
         run: dotnet build --no-restore --configuration Release
 
-      # --no-build reuses the compilation from the previous step.
-      # If a single test fails, this step fails, the job fails, and the PR
-      # shows a red cross — that's the entire safety net.
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release --verbosity normal
 
-  # --------------------------------------------------------------- frontend --
   frontend:
     name: Frontend build
     runs-on: ubuntu-latest
 
-    # All `run:` steps in this job execute inside frontend/ (saves repeating
-    # `cd frontend` in every step).
     defaults:
       run:
         working-directory: frontend
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      # Installs Node 22 and caches the npm download cache between runs,
-      # keyed on package-lock.json — when the lockfile doesn't change,
-      # dependency installation is much faster.
       - name: Set up Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      # `npm ci` (clean install) instead of `npm install`: installs EXACTLY
-      # what package-lock.json pins, fails if the lockfile is out of sync —
-      # deterministic builds, the right choice for CI.
       - name: Install dependencies
         run: npm ci
 
-      # A production build catches template/AOT errors that a dev build or
-      # the IDE can miss. This is the frontend's "does it compile" gate.
       - name: Build (production)
         run: npx ng build --configuration production
