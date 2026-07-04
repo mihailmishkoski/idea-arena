@@ -31,10 +31,19 @@ public class GetConversationsQueryHandler
                 c.Id,
                 c.Status,
                 c.RequesterId,
-                c.RecipientId,
                 c.PostId,
                 c.CreatedAtUtc,
                 OtherUserId = c.RequesterId == userId ? c.RecipientId : c.RequesterId,
+                OtherUser = _context.Authors
+                    .Where(u => u.Id == (c.RequesterId == userId ? c.RecipientId : c.RequesterId))
+                    .Select(u => new { u.DisplayName, u.AvatarId })
+                    .FirstOrDefault(),
+                PostName = c.PostId == null
+                    ? null
+                    : _context.BusinessIdeas
+                        .Where(p => p.Id == c.PostId)
+                        .Select(p => p.Name)
+                        .FirstOrDefault(),
                 LastMessage = c.Messages
                     .OrderByDescending(m => m.CreatedAtUtc)
                     .Select(m => new { m.Content, m.CreatedAtUtc })
@@ -43,16 +52,6 @@ public class GetConversationsQueryHandler
             })
             .ToListAsync(cancellationToken);
 
-        var otherIds = conversations.Select(c => c.OtherUserId).Distinct().ToList();
-        var authors = await _context.Authors
-            .Where(u => otherIds.Contains(u.Id))
-            .ToDictionaryAsync(u => u.Id, cancellationToken);
-
-        var postIds = conversations.Where(c => c.PostId != null).Select(c => c.PostId!.Value).ToList();
-        var postNames = await _context.BusinessIdeas
-            .Where(p => postIds.Contains(p.Id))
-            .ToDictionaryAsync(p => p.Id, p => p.Name, cancellationToken);
-
         return conversations
             .Select(c => new ConversationDto
             {
@@ -60,10 +59,10 @@ public class GetConversationsQueryHandler
                 Status = c.Status,
                 IAmRequester = c.RequesterId == userId,
                 OtherUserId = c.OtherUserId,
-                OtherUserName = authors.TryGetValue(c.OtherUserId, out var author) ? author.DisplayName : null,
-                OtherUserAvatar = authors.TryGetValue(c.OtherUserId, out var a) ? a.AvatarId : null,
+                OtherUserName = c.OtherUser?.DisplayName,
+                OtherUserAvatar = c.OtherUser?.AvatarId,
                 PostId = c.PostId,
-                PostName = c.PostId != null && postNames.TryGetValue(c.PostId.Value, out var name) ? name : null,
+                PostName = c.PostName,
                 LastMessage = c.LastMessage?.Content,
                 LastMessageAtUtc = c.LastMessage?.CreatedAtUtc,
                 CreatedAtUtc = c.CreatedAtUtc,

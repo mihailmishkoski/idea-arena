@@ -22,65 +22,52 @@ public class GetUserProfileQueryHandler : IRequestHandler<GetUserProfileQuery, U
 
     public async Task<UserProfileDto> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
     {
-        var member = await _context.Authors
-            .Where(u => u.Id == request.UserId)
-            .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new NotFoundException("User", request.UserId);
-
-        var ideasCount = await _context.BusinessIdeas
-            .CountAsync(i => i.AuthorId == request.UserId, cancellationToken);
-
-        var commentsCount = await _context.Comments
-            .CountAsync(c => c.AuthorId == request.UserId, cancellationToken);
-
-        var postKarma = await _context.PostVotes
-            .Where(v => v.Post.AuthorId == request.UserId)
-            .SumAsync(v => v.Direction == VoteDirection.Up ? 1 : -1, cancellationToken);
-
-        var commentKarma = await _context.CommentVotes
-            .Where(v => v.Comment.AuthorId == request.UserId)
-            .SumAsync(v => v.Direction == VoteDirection.Up ? 1 : -1, cancellationToken);
-
-        var wins = await _context.WeeklyWinners
-            .CountAsync(w => w.AuthorId == request.UserId, cancellationToken);
-
         var viewerId = _currentUser.UserId;
-        var recentIdeas = await _context.BusinessIdeas
-            .AsNoTracking()
-            .Where(i => i.AuthorId == request.UserId)
-            .OrderByDescending(i => i.CreatedAtUtc)
-            .Take(RecentIdeasCount)
-            .Select(i => new BusinessIdeaSummaryDto
-            {
-                Id = i.Id,
-                Name = i.Name,
-                UniqueValueProposition = i.UniqueValueProposition,
-                AuthorId = i.AuthorId,
-                AuthorName = member.DisplayName,
-                AuthorAvatar = member.AvatarId,
-                CreatedAtUtc = i.CreatedAtUtc,
-                UpVotes = i.Votes.Count(v => v.Direction == VoteDirection.Up),
-                DownVotes = i.Votes.Count(v => v.Direction == VoteDirection.Down),
-                CommentCount = i.Comments.Count,
-                CurrentUserVote = viewerId == null
-                    ? null
-                    : i.Votes
-                        .Where(v => v.UserId == viewerId)
-                        .Select(v => (VoteDirection?)v.Direction)
-                        .FirstOrDefault(),
-            })
-            .ToListAsync(cancellationToken);
 
-        return new UserProfileDto
-        {
-            Id = member.Id,
-            DisplayName = member.DisplayName,
-            AvatarId = member.AvatarId,
-            IdeasCount = ideasCount,
-            CommentsCount = commentsCount,
-            Karma = postKarma + commentKarma,
-            Wins = wins,
-            RecentIdeas = recentIdeas,
-        };
+        var profile = await _context.Authors
+            .Where(u => u.Id == request.UserId)
+            .Select(u => new UserProfileDto
+            {
+                Id = u.Id,
+                DisplayName = u.DisplayName,
+                AvatarId = u.AvatarId,
+                IdeasCount = _context.BusinessIdeas.Count(i => i.AuthorId == u.Id),
+                CommentsCount = _context.Comments.Count(c => c.AuthorId == u.Id),
+                Karma =
+                    _context.PostVotes
+                        .Where(v => v.Post.AuthorId == u.Id)
+                        .Sum(v => v.Direction == VoteDirection.Up ? 1 : -1) +
+                    _context.CommentVotes
+                        .Where(v => v.Comment.AuthorId == u.Id)
+                        .Sum(v => v.Direction == VoteDirection.Up ? 1 : -1),
+                Wins = _context.WeeklyWinners.Count(w => w.AuthorId == u.Id),
+                RecentIdeas = _context.BusinessIdeas
+                    .Where(i => i.AuthorId == u.Id)
+                    .OrderByDescending(i => i.CreatedAtUtc)
+                    .Take(RecentIdeasCount)
+                    .Select(i => new BusinessIdeaSummaryDto
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                        UniqueValueProposition = i.UniqueValueProposition,
+                        AuthorId = i.AuthorId,
+                        AuthorName = u.DisplayName,
+                        AuthorAvatar = u.AvatarId,
+                        CreatedAtUtc = i.CreatedAtUtc,
+                        UpVotes = i.Votes.Count(v => v.Direction == VoteDirection.Up),
+                        DownVotes = i.Votes.Count(v => v.Direction == VoteDirection.Down),
+                        CommentCount = i.Comments.Count,
+                        CurrentUserVote = viewerId == null
+                            ? null
+                            : i.Votes
+                                .Where(v => v.UserId == viewerId)
+                                .Select(v => (VoteDirection?)v.Direction)
+                                .FirstOrDefault(),
+                    })
+                    .ToList(),
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return profile ?? throw new NotFoundException("User", request.UserId);
     }
 }
