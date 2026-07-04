@@ -203,7 +203,7 @@
                 </button>
               }
             </div>
-            @if (loadingComments) {
+            @if (loadingComments && tree.length === 0) {
               <app-spinner label="Loading comments…"></app-spinner>
             }
             @if (!loadingComments && visibleTree.length === 0) {
@@ -211,8 +211,8 @@
                 No comments here yet.
               </div>
             }
-            @if (!loadingComments) {
-              <div class="comments__list">
+            @if (visibleTree.length > 0) {
+              <div class="comments__list" [class.comments__list--refreshing]="loadingComments">
                 @for (comment of visibleTree; track trackByCommentId($index, comment)) {
                   <app-comment-item
                     [comment]="comment"

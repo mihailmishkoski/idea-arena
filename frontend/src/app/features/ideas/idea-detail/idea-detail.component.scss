@@ -362,3 +362,12 @@
   color: var(--meta);
   font-size: 14px;
 }
+
+.comments__list {
+  transition: opacity 0.15s ease;
+
+  &--refreshing {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+}
