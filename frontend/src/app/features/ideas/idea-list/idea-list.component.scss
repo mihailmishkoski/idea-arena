@@ -38,8 +38,18 @@
 }
 
 .sort__caret {
-  font-size: 11px;
-  color: var(--meta);
+  width: 9px;
+  height: 9px;
+  margin: -4px 0 0 2px;
+  border-right: 2px solid var(--meta);
+  border-bottom: 2px solid var(--meta);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.sort.open .sort__caret {
+  margin-top: 4px;
+  transform: rotate(225deg);
 }
 
 .sort__backdrop {
@@ -101,12 +111,24 @@
 }
 
 .feed-toolbar__create {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 16px;
+  border: 1px solid var(--reddit-orange);
+  border-radius: 16px;
+  background: #fff;
   font-size: 13px;
   font-weight: 700;
   color: var(--reddit-orange);
+  text-decoration: none;
+  transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
 
   &:hover {
+    background: var(--reddit-orange);
+    color: #fff;
     text-decoration: none;
+    box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.15);
   }
 }
 

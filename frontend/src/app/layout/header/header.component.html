@@ -17,11 +17,13 @@
       />
     </form>
 
-    <a class="topbar__hof" routerLink="/winners" title="Hall of Fame">🏆</a>
+    <a class="topbar__hof" routerLink="/winners" title="Hall of Fame">
+      <span class="topbar__hof-icon" aria-hidden="true">🏆</span>
+      <span class="topbar__hof-text">Winners</span>
+    </a>
 
     @if (currentUser$ | async; as user) {
       <div class="topbar__actions">
-        <a class="btn btn--primary topbar__create" routerLink="/submit">+ Create</a>
         <!-- Messages -->
         <button type="button" class="icon-btn" (click)="goToMessages()" aria-label="Messages">
           ✉️
@@ -82,6 +84,9 @@
                   <small>{{ user.email }}</small>
                 </div>
               </div>
+              <button type="button" class="dropdown__item" (click)="goToProfile(user.id)">
+                👤 My profile
+              </button>
               <button type="button" class="dropdown__item" (click)="changingAvatar = !changingAvatar">
                 🎭 Change avatar
               </button>

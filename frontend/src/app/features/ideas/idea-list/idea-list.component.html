@@ -4,7 +4,7 @@
       <button type="button" class="sort__button" (click)="toggleSortMenu()">
         <span class="sort__icon">{{ currentSort.icon }}</span>
         <span class="sort__label">{{ currentSort.label }}</span>
-        <span class="sort__caret">▾</span>
+        <span class="sort__caret" aria-hidden="true"></span>
       </button>
 
       @if (sortMenuOpen) {
