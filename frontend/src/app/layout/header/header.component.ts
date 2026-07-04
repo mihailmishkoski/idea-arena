@@ -105,6 +105,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate(['/messages']);
   }
 
+  goToProfile(userId: string): void {
+    this.closeMenus();
+    this.router.navigate(['/users', userId]);
+  }
+
   // --- Avatar -----------------------------------------------------------------
 
   pickAvatar(avatarId: string): void {
