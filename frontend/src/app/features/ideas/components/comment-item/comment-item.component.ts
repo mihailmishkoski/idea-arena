@@ -1,16 +1,11 @@
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
-import { CommentDto, CommentNode } from '../../../../core/models/comment.model';
-import { VoteDirection } from '../../../../core/models/enums';
-
-export interface CommentVoteEvent {
-  comment: CommentDto;
-  direction: VoteDirection;
-}
-
-export interface CommentReplyEvent {
-  parent: CommentDto;
-  content: string;
-}
+import {
+  CommentViewModel,
+  CommentNodeViewModel,
+  CommentReplyEvent,
+  CommentVoteEvent,
+} from '@core';
+import { VoteDirection } from '@core';
 
 /**
  * A single comment and, recursively, its replies. Presentational: it manages its
@@ -25,12 +20,12 @@ export interface CommentReplyEvent {
     standalone: false
 })
 export class CommentItemComponent {
-  @Input() comment!: CommentNode;
+  @Input() comment!: CommentNodeViewModel;
   @Input() currentUserId: string | null = null;
   @Input() isAuthenticated = false;
 
   @Output() vote = new EventEmitter<CommentVoteEvent>();
-  @Output() remove = new EventEmitter<CommentDto>();
+  @Output() remove = new EventEmitter<CommentViewModel>();
   @Output() reply = new EventEmitter<CommentReplyEvent>();
 
   showReplyBox = false;

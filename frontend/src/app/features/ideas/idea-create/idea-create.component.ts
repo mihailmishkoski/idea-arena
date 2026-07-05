@@ -3,8 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { CreateIdeaRequest } from '../../../core/models/business-idea.model';
-import { IdeasService } from '../../../core/services/ideas.service';
+import { CreateIdeaRequest, IdeasApiService } from '@core';
 
 @Component({
     selector: 'app-idea-create',
@@ -23,7 +22,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly ideasService: IdeasService,
+    private readonly ideasService: IdeasApiService,
     private readonly router: Router
   ) {}
 

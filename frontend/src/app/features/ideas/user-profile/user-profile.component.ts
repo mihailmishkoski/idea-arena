@@ -2,9 +2,7 @@ import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, switchMap, takeUntil } from 'rxjs/operators';
-import { UserProfile } from '../../../core/models/user-profile.model';
-import { ideaExpiresAt } from '../../../core/idea-rules';
-import { UsersService } from '../../../core/services/users.service';
+import { UserProfileViewModel, UsersApiService, ideaExpiresAt } from '@core';
 
 /** A member's public profile: stats plus their recent ideas. */
 @Component({
@@ -15,7 +13,7 @@ import { UsersService } from '../../../core/services/users.service';
     standalone: false
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
-  profile: UserProfile | null = null;
+  profile: UserProfileViewModel | null = null;
   loading = false;
   error = false;
 
@@ -23,7 +21,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersApiService
   ) {}
 
   ngOnInit(): void {

@@ -2,24 +2,24 @@ import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { BusinessIdeaDetail } from '../../../core/models/business-idea.model';
-import { ChatRequestStatus, ConversationDto } from '../../../core/models/chat.model';
-import { CommentDto, CommentNode, CreateCommentRequest } from '../../../core/models/comment.model';
-import { IdeaMetric, VoteDirection } from '../../../core/models/enums';
 import {
+  AuthService,
+  BusinessIdeaDetailViewModel,
+  ChatRequestStatus,
+  ChatService,
+  CommentNodeViewModel,
   CommentReplyEvent,
+  CommentViewModel,
   CommentVoteEvent,
-} from '../components/comment-item/comment-item.component';
-import { AuthService } from '../../../core/services/auth.service';
-import { ChatService } from '../../../core/services/chat.service';
-import { CommentsService } from '../../../core/services/comments.service';
-import { IdeasService } from '../../../core/services/ideas.service';
-import { VotesService } from '../../../core/services/votes.service';
-
-interface MetricFilter {
-  label: string;
-  value: IdeaMetric | null;
-}
+  CommentsApiService,
+  ConversationViewModel,
+  CreateCommentRequest,
+  IdeaMetric,
+  IdeasApiService,
+  VoteDirection,
+  VotesApiService,
+} from '@core';
+import { MetricFilterViewModel } from '../view-models';
 
 @Component({
     selector: 'app-idea-detail',
@@ -29,8 +29,8 @@ interface MetricFilter {
     standalone: false
 })
 export class IdeaDetailComponent implements OnInit, OnDestroy {
-  idea: BusinessIdeaDetail | null = null;
-  tree: CommentNode[] = [];
+  idea: BusinessIdeaDetailViewModel | null = null;
+  tree: CommentNodeViewModel[] = [];
 
   loading = false;
   loadingComments = false;
@@ -51,10 +51,10 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
   cofoundState: 'none' | 'pending' | 'accepted' = 'none';
   existingConversationId: string | null = null;
 
-  private conversationsSnapshot: ConversationDto[] = [];
+  private conversationsSnapshot: ConversationViewModel[] = [];
 
   readonly Metric = IdeaMetric;
-  readonly filters: MetricFilter[] = [
+  readonly filters: MetricFilterViewModel[] = [
     { label: 'All', value: null },
     { label: 'General', value: IdeaMetric.General },
     { label: 'Unique Value', value: IdeaMetric.UniqueValueProposition },
@@ -72,9 +72,9 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly ideasService: IdeasService,
-    private readonly commentsService: CommentsService,
-    private readonly votesService: VotesService,
+    private readonly ideasService: IdeasApiService,
+    private readonly commentsService: CommentsApiService,
+    private readonly votesService: VotesApiService,
     private readonly chatService: ChatService,
     private readonly auth: AuthService
   ) {}
@@ -112,7 +112,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Top-level comments visible under the current topic filter. */
-  get visibleTree(): CommentNode[] {
+  get visibleTree(): CommentNodeViewModel[] {
     if (this.filterMetric === null) {
       return this.tree;
     }
@@ -151,7 +151,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .voteOnComment(event.comment.id, event.direction)
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
-        const node = event.comment as CommentNode;
+        const node = event.comment as CommentNodeViewModel;
         node.upVotes = result.upVotes;
         node.downVotes = result.downVotes;
         node.score = result.score;
@@ -189,7 +189,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .subscribe(() => this.fetchComments());
   }
 
-  onDeleteComment(comment: CommentDto): void {
+  onDeleteComment(comment: CommentViewModel): void {
     this.commentsService
       .deleteComment(comment.id)
       .pipe(takeUntil(this.destroy$))
@@ -291,7 +291,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .subscribe(() => this.router.navigate(['/']));
   }
 
-  trackByCommentId(_index: number, comment: CommentNode): string {
+  trackByCommentId(_index: number, comment: CommentNodeViewModel): string {
     return comment.id;
   }
 
@@ -328,7 +328,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .subscribe((comments) => this.setComments(comments));
   }
 
-  private setComments(flat: CommentDto[]): void {
+  private setComments(flat: CommentViewModel[]): void {
     this.tree = this.buildTree(flat);
     if (this.idea) {
       this.idea.commentCount = flat.length;
@@ -336,11 +336,11 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Turns the flat comment list into a sorted, threaded tree. */
-  private buildTree(flat: CommentDto[]): CommentNode[] {
-    const byId = new Map<string, CommentNode>();
+  private buildTree(flat: CommentViewModel[]): CommentNodeViewModel[] {
+    const byId = new Map<string, CommentNodeViewModel>();
     flat.forEach((c) => byId.set(c.id, { ...c, replies: [], depth: 0 }));
 
-    const roots: CommentNode[] = [];
+    const roots: CommentNodeViewModel[] = [];
     flat.forEach((c) => {
       const node = byId.get(c.id)!;
       const parent = c.parentCommentId ? byId.get(c.parentCommentId) : undefined;
@@ -352,14 +352,14 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       }
     });
 
-    const createdMs = (c: CommentNode): number => new Date(c.createdAtUtc).getTime();
+    const createdMs = (c: CommentNodeViewModel): number => new Date(c.createdAtUtc).getTime();
 
     // Highest score first (like posts); newest breaks ties. Applied to replies
     // recursively as well as top-level comments.
-    const byScoreThenNew = (a: CommentNode, b: CommentNode): number =>
+    const byScoreThenNew = (a: CommentNodeViewModel, b: CommentNodeViewModel): number =>
       b.score - a.score || createdMs(b) - createdMs(a);
 
-    const sortRecursive = (node: CommentNode): void => {
+    const sortRecursive = (node: CommentNodeViewModel): void => {
       node.replies.sort(byScoreThenNew);
       node.replies.forEach(sortRecursive);
     };

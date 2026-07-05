@@ -3,12 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { finalize, map, takeUntil } from 'rxjs/operators';
 import {
-  ChatMessageDto,
+  AuthService,
+  ChatMessageViewModel,
   ChatRequestStatus,
-  ConversationDto,
-} from '../../../core/models/chat.model';
-import { AuthService } from '../../../core/services/auth.service';
-import { ChatService } from '../../../core/services/chat.service';
+  ChatService,
+  ConversationViewModel,
+} from '@core';
 
 /**
  * The messaging screen: conversation list (incl. pending requests) on the left,
@@ -22,9 +22,9 @@ import { ChatService } from '../../../core/services/chat.service';
     standalone: false
 })
 export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
-  conversations: ConversationDto[] = [];
-  selected: ConversationDto | null = null;
-  messages: ChatMessageDto[] = [];
+  conversations: ConversationViewModel[] = [];
+  selected: ConversationViewModel | null = null;
+  messages: ChatMessageViewModel[] = [];
 
   loadingMessages = false;
   sending = false;
@@ -95,27 +95,27 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.destroy$.complete();
   }
 
-  get pendingIncoming(): ConversationDto[] {
+  get pendingIncoming(): ConversationViewModel[] {
     return this.conversations.filter(
       (c) => c.status === ChatRequestStatus.Pending && !c.iAmRequester
     );
   }
 
-  get regularConversations(): ConversationDto[] {
+  get regularConversations(): ConversationViewModel[] {
     return this.conversations.filter(
       (c) => !(c.status === ChatRequestStatus.Pending && !c.iAmRequester)
     );
   }
 
-  isMine(message: ChatMessageDto): boolean {
+  isMine(message: ChatMessageViewModel): boolean {
     return message.senderId === this.currentUserId;
   }
 
-  select(conversation: ConversationDto): void {
+  select(conversation: ConversationViewModel): void {
     this.router.navigate(['/messages', conversation.id]);
   }
 
-  respond(conversation: ConversationDto, accept: boolean, event: Event): void {
+  respond(conversation: ConversationViewModel, accept: boolean, event: Event): void {
     event.stopPropagation();
     this.chat
       .respond(conversation.id, accept)
@@ -147,11 +147,11 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
   }
 
-  trackByMessageId(_index: number, message: ChatMessageDto): string {
+  trackByMessageId(_index: number, message: ChatMessageViewModel): string {
     return message.id;
   }
 
-  trackByConversationId(_index: number, conversation: ConversationDto): string {
+  trackByConversationId(_index: number, conversation: ConversationViewModel): string {
     return conversation.id;
   }
 

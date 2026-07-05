@@ -11,18 +11,15 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
-import { BusinessIdeaSummary } from '../../../core/models/business-idea.model';
-import { IdeaSortOrder, VoteDirection } from '../../../core/models/enums';
-import { AuthService } from '../../../core/services/auth.service';
-import { IdeasService } from '../../../core/services/ideas.service';
-import { VotesService } from '../../../core/services/votes.service';
-
-interface SortOption {
-  value: IdeaSortOrder;
-  label: string;
-  icon: string;
-  hint: string;
-}
+import {
+  AuthService,
+  BusinessIdeaSummaryViewModel,
+  IdeaSortOrder,
+  IdeasApiService,
+  VoteDirection,
+  VotesApiService,
+} from '@core';
+import { SortOptionViewModel } from '../view-models';
 
 @Component({
     selector: 'app-idea-list',
@@ -32,7 +29,7 @@ interface SortOption {
     standalone: false
 })
 export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
-  ideas: BusinessIdeaSummary[] = [];
+  ideas: BusinessIdeaSummaryViewModel[] = [];
   loading = false;
   loadingMore = false;
   error = false;
@@ -43,7 +40,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   sortMenuOpen = false;
 
   readonly SortOrder = IdeaSortOrder;
-  readonly sortOptions: SortOption[] = [
+  readonly sortOptions: SortOptionViewModel[] = [
     { value: IdeaSortOrder.Best, label: 'Best', icon: '🏅', hint: 'Most engagement' },
     { value: IdeaSortOrder.Top, label: 'Top', icon: '🔝', hint: 'Highest score' },
     { value: IdeaSortOrder.New, label: 'New', icon: '🆕', hint: 'Freshly posted' },
@@ -62,8 +59,8 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private readonly ideasService: IdeasService,
-    private readonly votesService: VotesService,
+    private readonly ideasService: IdeasApiService,
+    private readonly votesService: VotesApiService,
     private readonly auth: AuthService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -114,7 +111,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sort === IdeaSortOrder.Winners;
   }
 
-  get currentSort(): SortOption {
+  get currentSort(): SortOptionViewModel {
     return this.sortOptions.find((o) => o.value === this.sort) ?? this.sortOptions[1];
   }
 
@@ -140,7 +137,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fetchData();
   }
 
-  onVote(idea: BusinessIdeaSummary, direction: VoteDirection): void {
+  onVote(idea: BusinessIdeaSummaryViewModel, direction: VoteDirection): void {
     if (!this.auth.currentUser) {
       this.router.navigate(['/auth/login']);
       return;
@@ -157,7 +154,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  trackById(_index: number, idea: BusinessIdeaSummary): string {
+  trackById(_index: number, idea: BusinessIdeaSummaryViewModel): string {
     return idea.id;
   }
 

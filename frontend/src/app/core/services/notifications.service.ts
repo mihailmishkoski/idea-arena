@@ -3,17 +3,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { API_BASE } from '../api.config';
-import { NotificationDto } from '../models/notification.model';
+import { NotificationMapper } from '../mappers';
+import { NotificationResponse } from '../models/responses';
+import { NotificationViewModel } from '../models/view-models';
 
-/**
- * Holds the current user's notifications. Fed by HTTP on load and by the
- * realtime service when a push arrives, so the bell badge is always live.
- */
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
   private readonly baseUrl = `${API_BASE}/notifications`;
 
-  private readonly notificationsSubject = new BehaviorSubject<NotificationDto[]>([]);
+  private readonly notificationsSubject = new BehaviorSubject<NotificationViewModel[]>([]);
   readonly notifications$ = this.notificationsSubject.asObservable();
   readonly unreadCount$ = this.notifications$.pipe(
     map((list) => list.filter((n) => !n.isRead).length)
@@ -21,14 +19,16 @@ export class NotificationsService {
 
   constructor(private readonly http: HttpClient) {}
 
-  load(): Observable<NotificationDto[]> {
-    return this.http
-      .get<NotificationDto[]>(this.baseUrl)
-      .pipe(tap((list) => this.notificationsSubject.next(list)));
+  load(): Observable<NotificationViewModel[]> {
+    return this.http.get<NotificationResponse[]>(this.baseUrl).pipe(
+      map((responses) =>
+        responses.map((response) => NotificationMapper.toNotificationViewModel(response))
+      ),
+      tap((list) => this.notificationsSubject.next(list))
+    );
   }
 
-  /** Called by the realtime service when a notification is pushed. */
-  receive(notification: NotificationDto): void {
+  receive(notification: NotificationViewModel): void {
     this.notificationsSubject.next([notification, ...this.notificationsSubject.value]);
   }
 

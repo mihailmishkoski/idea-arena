@@ -3,8 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { AVATARS, AvatarInfo, randomAvatarId } from '../../../core/avatars';
-import { AuthService } from '../../../core/services/auth.service';
+import { AVATARS, AuthService, AvatarViewModel, randomAvatarId } from '@core';
 
 @Component({
     selector: 'app-register',
@@ -18,7 +17,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   submitting = false;
   errorMessage: string | null = null;
 
-  readonly avatars: AvatarInfo[] = AVATARS;
+  readonly avatars: AvatarViewModel[] = AVATARS;
   selectedAvatarId: string = randomAvatarId();
 
   private readonly destroy$ = new Subject<void>();

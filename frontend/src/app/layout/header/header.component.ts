@@ -2,14 +2,17 @@ import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
-import { AVATARS, AvatarInfo } from '../../core/avatars';
-import { CurrentUser } from '../../core/models/user.model';
-import { NotificationDto, NotificationType } from '../../core/models/notification.model';
-import { AuthService } from '../../core/services/auth.service';
-import { ChatService } from '../../core/services/chat.service';
-import { NotificationsService } from '../../core/services/notifications.service';
-
-type HeaderMenu = 'notifications' | 'avatar' | null;
+import {
+  AVATARS,
+  AuthService,
+  AvatarViewModel,
+  ChatService,
+  CurrentUserViewModel,
+  NotificationType,
+  NotificationViewModel,
+  NotificationsService,
+} from '@core';
+import { HeaderMenu } from '../view-models';
 
 /**
  * Top navigation bar: brand, debounced live search, messages icon, notification
@@ -24,12 +27,12 @@ type HeaderMenu = 'notifications' | 'avatar' | null;
     standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  readonly currentUser$: Observable<CurrentUser | null> = this.auth.currentUser$;
-  readonly notifications$: Observable<NotificationDto[]> = this.notifications.notifications$;
+  readonly currentUser$: Observable<CurrentUserViewModel | null> = this.auth.currentUser$;
+  readonly notifications$: Observable<NotificationViewModel[]> = this.notifications.notifications$;
   readonly unreadNotifications$: Observable<number> = this.notifications.unreadCount$;
   readonly unreadMessages$: Observable<number> = this.chat.unreadTotal$;
 
-  readonly avatars: AvatarInfo[] = AVATARS;
+  readonly avatars: AvatarViewModel[] = AVATARS;
 
   searchTerm = '';
   openMenu: HeaderMenu = null;
@@ -85,7 +88,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.changingAvatar = false;
   }
 
-  openNotification(notification: NotificationDto): void {
+  openNotification(notification: NotificationViewModel): void {
     this.closeMenus();
 
     if (!notification.targetId) {

@@ -3,26 +3,28 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { API_BASE } from '../api.config';
-import { CurrentUser, LoginRequest, RegisterRequest } from '../models/user.model';
+import { CurrentUserMapper } from '../mappers';
+import { LoginRequest, RegisterRequest } from '../models/requests';
+import { CurrentUserResponse } from '../models/responses';
+import { CurrentUserViewModel } from '../models/view-models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly baseUrl = `${API_BASE}/auth`;
 
-  /** Single source of truth for the signed-in user, streamed to any subscriber. */
-  private readonly currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
+  private readonly currentUserSubject = new BehaviorSubject<CurrentUserViewModel | null>(null);
   readonly currentUser$ = this.currentUserSubject.asObservable();
   readonly isAuthenticated$ = this.currentUser$.pipe(map((user) => user !== null));
 
   constructor(private readonly http: HttpClient) {}
 
-  get currentUser(): CurrentUser | null {
+  get currentUser(): CurrentUserViewModel | null {
     return this.currentUserSubject.value;
   }
 
-  /** Called once on app start to restore the session from the auth cookie. */
-  loadCurrentUser(): Observable<CurrentUser | null> {
-    return this.http.get<CurrentUser>(`${this.baseUrl}/me`).pipe(
+  loadCurrentUser(): Observable<CurrentUserViewModel | null> {
+    return this.http.get<CurrentUserResponse>(`${this.baseUrl}/me`).pipe(
+      map((response) => CurrentUserMapper.toCurrentUserViewModel(response)),
       tap((user) => this.currentUserSubject.next(user)),
       catchError(() => {
         this.currentUserSubject.next(null);
@@ -31,16 +33,18 @@ export class AuthService {
     );
   }
 
-  login(request: LoginRequest): Observable<CurrentUser> {
-    return this.http
-      .post<CurrentUser>(`${this.baseUrl}/login`, request)
-      .pipe(tap((user) => this.currentUserSubject.next(user)));
+  login(request: LoginRequest): Observable<CurrentUserViewModel> {
+    return this.http.post<CurrentUserResponse>(`${this.baseUrl}/login`, request).pipe(
+      map((response) => CurrentUserMapper.toCurrentUserViewModel(response)),
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 
-  register(request: RegisterRequest): Observable<CurrentUser> {
-    return this.http
-      .post<CurrentUser>(`${this.baseUrl}/register`, request)
-      .pipe(tap((user) => this.currentUserSubject.next(user)));
+  register(request: RegisterRequest): Observable<CurrentUserViewModel> {
+    return this.http.post<CurrentUserResponse>(`${this.baseUrl}/register`, request).pipe(
+      map((response) => CurrentUserMapper.toCurrentUserViewModel(response)),
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 
   logout(): Observable<void> {
@@ -49,9 +53,10 @@ export class AuthService {
       .pipe(tap(() => this.currentUserSubject.next(null)));
   }
 
-  updateAvatar(avatarId: string): Observable<CurrentUser> {
-    return this.http
-      .put<CurrentUser>(`${this.baseUrl}/avatar`, { avatarId })
-      .pipe(tap((user) => this.currentUserSubject.next(user)));
+  updateAvatar(avatarId: string): Observable<CurrentUserViewModel> {
+    return this.http.put<CurrentUserResponse>(`${this.baseUrl}/avatar`, { avatarId }).pipe(
+      map((response) => CurrentUserMapper.toCurrentUserViewModel(response)),
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 }

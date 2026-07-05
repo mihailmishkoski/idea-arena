@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { avatarById, AvatarInfo } from '../../../core/avatars';
+import { AvatarViewModel, avatarById } from '@core';
 
 /** A round avatar rendered from the built-in collection by its id. */
 @Component({
@@ -13,7 +13,7 @@ export class AvatarComponent {
   @Input() avatarId: string | null | undefined;
   @Input() size = 32;
 
-  get info(): AvatarInfo {
+  get info(): AvatarViewModel {
     return avatarById(this.avatarId);
   }
 }
