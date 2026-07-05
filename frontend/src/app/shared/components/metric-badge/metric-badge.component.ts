@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { METRIC_INFO } from '../../../core/metric-info';
-import { IdeaMetric } from '../../../core/models/enums';
+import { IdeaMetric, METRIC_INFO } from '@core';
 
 /** A coloured pill showing which topic a comment is anchored to. */
 @Component({

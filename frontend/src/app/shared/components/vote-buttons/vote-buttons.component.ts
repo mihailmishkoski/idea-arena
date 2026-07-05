@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
-import { VoteDirection } from '../../../core/models/enums';
+import { VoteDirection } from '@core';
 
 /**
  * Reddit-style up/down vote control. Purely presentational: it renders the

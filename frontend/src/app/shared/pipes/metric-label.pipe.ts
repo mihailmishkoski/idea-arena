@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IdeaMetric } from '../../core/models/enums';
+import { IdeaMetric } from '@core';
 
 const LABELS: Record<IdeaMetric, string> = {
   [IdeaMetric.General]: 'General',

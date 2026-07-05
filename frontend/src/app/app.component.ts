@@ -1,10 +1,7 @@
 import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthService } from './core/services/auth.service';
-import { ChatService } from './core/services/chat.service';
-import { NotificationsService } from './core/services/notifications.service';
-import { RealtimeService } from './core/services/realtime.service';
+import { AuthService, ChatService, NotificationsService, RealtimeService } from '@core';
 
 @Component({
     selector: 'app-root',

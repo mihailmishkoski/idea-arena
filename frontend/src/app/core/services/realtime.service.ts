@@ -5,16 +5,12 @@ import {
   HubConnectionState,
   LogLevel,
 } from '@microsoft/signalr';
-import { ChatMessageDto } from '../models/chat.model';
-import { NotificationDto } from '../models/notification.model';
+import { ChatMessageMapper, NotificationMapper } from '../mappers';
+import { ChatMessageResponse } from '../models/responses';
+import { NotificationResponse } from '../models/responses';
 import { ChatService } from './chat.service';
 import { NotificationsService } from './notifications.service';
 
-/**
- * Owns the WebSocket (SignalR) connection to the backend hub. Started when a
- * user signs in, stopped on sign-out. Incoming events are dispatched to the
- * notification and chat stores inside the Angular zone so the UI updates.
- */
 @Injectable({ providedIn: 'root' })
 export class RealtimeService {
   private connection: HubConnection | null = null;
@@ -31,17 +27,21 @@ export class RealtimeService {
     }
 
     this.connection = new HubConnectionBuilder()
-      .withUrl('/hubs/chat') // same-origin via the dev proxy; auth cookie flows along
+      .withUrl('/hubs/chat')
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Warning)
       .build();
 
-    this.connection.on('notification', (dto: NotificationDto) =>
-      this.zone.run(() => this.notifications.receive(dto))
+    this.connection.on('notification', (response: NotificationResponse) =>
+      this.zone.run(() =>
+        this.notifications.receive(NotificationMapper.toNotificationViewModel(response))
+      )
     );
 
-    this.connection.on('chatMessage', (dto: ChatMessageDto) =>
-      this.zone.run(() => this.chat.receiveMessage(dto))
+    this.connection.on('chatMessage', (response: ChatMessageResponse) =>
+      this.zone.run(() =>
+        this.chat.receiveMessage(ChatMessageMapper.toChatMessageViewModel(response))
+      )
     );
 
     this.connection

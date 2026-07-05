@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { BusinessIdeaSummary } from '../../../../core/models/business-idea.model';
-import { VoteDirection } from '../../../../core/models/enums';
-import { HOT_SCORE_THRESHOLD, ideaExpiresAt } from '../../../../core/idea-rules';
+import {
+  BusinessIdeaSummaryViewModel,
+  HOT_SCORE_THRESHOLD,
+  VoteDirection,
+  ideaExpiresAt,
+} from '@core';
 
 /**
  * A single idea row in the feed. The whole card is clickable; the vote rail
@@ -17,7 +20,7 @@ import { HOT_SCORE_THRESHOLD, ideaExpiresAt } from '../../../../core/idea-rules'
     standalone: false
 })
 export class IdeaCardComponent {
-  @Input() idea!: BusinessIdeaSummary;
+  @Input() idea!: BusinessIdeaSummaryViewModel;
   @Input() isWinner = false;
   @Input() closed = false;
 
