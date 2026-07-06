@@ -59,7 +59,19 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: () => this.router.navigateByUrl(this.returnUrl),
-        error: () => (this.errorMessage = 'Invalid email or password.'),
+        error: (err: unknown) => {
+          const httpError = err as { status?: number; error?: { title?: string } };
+
+          // 403 = right password, unconfirmed email - finish verification.
+          if (httpError.status === 403) {
+            this.router.navigate(['/auth/confirm-email'], {
+              queryParams: { email: this.form.getRawValue().email, resend: '1' },
+            });
+            return;
+          }
+
+          this.errorMessage = httpError.error?.title ?? 'Invalid email or password.';
+        },
       });
   }
 }

@@ -5,6 +5,7 @@ export * from './conversation.response';
 export * from './current-user.response';
 export * from './notification.response';
 export * from './paginated-list.response';
+export * from './registration-result.response';
 export * from './user-profile.response';
 export * from './vote-result.response';
 export * from './weekly-winner.response';

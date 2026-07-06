@@ -7,6 +7,7 @@ export * from './current-user.view-model';
 export * from './metric-info.view-model';
 export * from './notification.view-model';
 export * from './paginated-list.view-model';
+export * from './registration-result.view-model';
 export * from './user-profile.view-model';
 export * from './vote-result.view-model';
 export * from './weekly-winner.view-model';

@@ -57,7 +57,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe({
-        next: () => this.router.navigateByUrl('/'),
+        next: (result) =>
+          this.router.navigate(['/auth/confirm-email'], {
+            queryParams: { email: result.email },
+          }),
         error: (err) =>
           (this.errorMessage =
             this.extractError(err) ?? 'Could not create your account. Please try again.'),

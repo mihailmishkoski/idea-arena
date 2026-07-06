@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.confirm__code {
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.confirm__info {
+  background: #e3f6ec;
+  color: #1a7f4b;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.confirm__resend {
+  background: none;
+  border: none;
+  color: #0079d3;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+
+  &:disabled {
+    color: #9aa0a6;
+    cursor: default;
+  }
+
+  &:not(:disabled):hover {
+    text-decoration: underline;
+  }
+}
