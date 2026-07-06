@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
+
 import {
   AVATARS,
   AuthService,
@@ -12,6 +13,7 @@ import {
   NotificationViewModel,
   NotificationsService,
 } from '@core';
+
 import { HeaderMenu } from '../view-models';
 
 /**
@@ -20,13 +22,14 @@ import { HeaderMenu } from '../view-models';
  * real time through the notification/chat stores.
  */
 @Component({
-    selector: 'app-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+
   readonly currentUser$: Observable<CurrentUserViewModel | null> = this.auth.currentUser$;
   readonly notifications$: Observable<NotificationViewModel[]> = this.notifications.notifications$;
   readonly unreadNotifications$: Observable<number> = this.notifications.unreadCount$;
@@ -37,6 +40,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   searchTerm = '';
   openMenu: HeaderMenu = null;
   changingAvatar = false;
+
+  
+  isAuthPage = false;
 
   private readonly minChars = 3;
   private readonly searchInput$ = new Subject<string>();
@@ -50,9 +56,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+
     this.searchInput$
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
       .subscribe((term) => this.runSearch(term));
+
+    // Hide search bar on auth pages
+    this.isAuthPage = this.router.url.startsWith('/auth');
+
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.isAuthPage = this.router.url.startsWith('/auth');
+      });
   }
 
   ngOnDestroy(): void {
@@ -70,14 +93,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.runSearch(this.searchTerm);
   }
 
-  // --- Menus ------------------------------------------------------------------
+  // --- Menus ----------------------------------------------------------------
 
   toggleMenu(menu: Exclude<HeaderMenu, null>): void {
     const wasOpen = this.openMenu === menu;
     this.openMenu = wasOpen ? null : menu;
     this.changingAvatar = false;
 
-    // Opening the bell marks everything as seen.
     if (!wasOpen && menu === 'notifications') {
       this.notifications.markAllRead().subscribe();
     }
@@ -100,7 +122,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       notification.type === NotificationType.ChatAccepted ||
       notification.type === NotificationType.NewMessage;
 
-    this.router.navigate(isChat ? ['/messages', notification.targetId] : ['/ideas', notification.targetId]);
+    this.router.navigate(
+      isChat
+        ? ['/messages', notification.targetId]
+        : ['/ideas', notification.targetId]
+    );
   }
 
   goToMessages(): void {
@@ -113,7 +139,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate(['/users', userId]);
   }
 
-  // --- Avatar -----------------------------------------------------------------
+  // --- Avatar ---------------------------------------------------------------
 
   pickAvatar(avatarId: string): void {
     this.auth
