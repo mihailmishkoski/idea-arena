@@ -5,6 +5,7 @@ export * from './conversation.mapper';
 export * from './current-user.mapper';
 export * from './notification.mapper';
 export * from './paginated-list.mapper';
+export * from './registration-result.mapper';
 export * from './user-profile.mapper';
 export * from './vote-result.mapper';
 export * from './weekly-winner.mapper';

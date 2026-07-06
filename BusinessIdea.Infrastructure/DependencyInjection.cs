@@ -42,10 +42,30 @@ public static class DependencyInjection
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
-                options.SignIn.RequireConfirmedAccount = false;
+
+                // Registration issues an emailed code; unconfirmed accounts cannot sign in.
+                options.SignIn.RequireConfirmedEmail = true;
+
+                // Five failed passwords or verification codes lock the account briefly.
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        return services;
+    }
+
+    /// <summary>
+    /// SMTP email for the API process. The Worker owns all outbox email, but the
+    /// registration verification code is critical-path: it must go out instantly
+    /// and must not depend on the Worker running.
+    /// </summary>
+    public static IServiceCollection AddAuthEmailServices(
+        this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
 
         return services;
     }

@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // --- Application composition ------------------------------------------------
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddAuthEmailServices(builder.Configuration);
 
 // The current-user abstraction is implemented in the web layer.
 builder.Services.AddHttpContextAccessor();

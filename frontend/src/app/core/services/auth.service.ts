@@ -3,10 +3,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { API_BASE } from '../api.config';
-import { CurrentUserMapper } from '../mappers';
-import { LoginRequest, RegisterRequest } from '../models/requests';
-import { CurrentUserResponse } from '../models/responses';
-import { CurrentUserViewModel } from '../models/view-models';
+import { CurrentUserMapper, RegistrationResultMapper } from '../mappers';
+import {
+  ConfirmEmailRequest,
+  LoginRequest,
+  RegisterRequest,
+  ResendCodeRequest,
+} from '../models/requests';
+import { CurrentUserResponse, RegistrationResultResponse } from '../models/responses';
+import { CurrentUserViewModel, RegistrationResultViewModel } from '../models/view-models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -40,11 +45,21 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest): Observable<CurrentUserViewModel> {
-    return this.http.post<CurrentUserResponse>(`${this.baseUrl}/register`, request).pipe(
+  register(request: RegisterRequest): Observable<RegistrationResultViewModel> {
+    return this.http
+      .post<RegistrationResultResponse>(`${this.baseUrl}/register`, request)
+      .pipe(map((response) => RegistrationResultMapper.toRegistrationResultViewModel(response)));
+  }
+
+  confirmEmail(request: ConfirmEmailRequest): Observable<CurrentUserViewModel> {
+    return this.http.post<CurrentUserResponse>(`${this.baseUrl}/confirm-email`, request).pipe(
       map((response) => CurrentUserMapper.toCurrentUserViewModel(response)),
       tap((user) => this.currentUserSubject.next(user))
     );
+  }
+
+  resendCode(request: ResendCodeRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/resend-code`, request);
   }
 
   logout(): Observable<void> {

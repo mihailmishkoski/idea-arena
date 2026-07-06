@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Log in · BusinessIdea' },
   { path: 'register', component: RegisterComponent, title: 'Sign up · BusinessIdea' },
+  { path: 'confirm-email', component: ConfirmEmailComponent, title: 'Verify email · BusinessIdea' },
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 ];
 
