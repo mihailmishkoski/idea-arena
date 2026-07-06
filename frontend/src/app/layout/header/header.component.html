@@ -4,123 +4,201 @@
     <span class="topbar__name">idea<em>arena</em></span>
   </a>
 
-  <form class="topbar__search" (ngSubmit)="onSubmit()">
-    <span class="topbar__search-icon" aria-hidden="true">🔍</span>
-    <input
-      type="search"
-      name="q"
-      [(ngModel)]="searchTerm"
-      (ngModelChange)="onInput($event)"
-      placeholder="Search ideas…"
-      autocomplete="off"
-      aria-label="Search ideas"
+  @if (!isAuthPage) {
+    <form class="topbar__search" (ngSubmit)="onSubmit()">
+      <span class="topbar__search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        name="q"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onInput($event)"
+        placeholder="Search ideas…"
+        autocomplete="off"
+        aria-label="Search ideas"
       />
     </form>
+  }
 
-    <a class="topbar__hof" routerLink="/winners" title="Hall of Fame">
-      <span class="topbar__hof-icon" aria-hidden="true">🏆</span>
-      <span class="topbar__hof-text">Winners</span>
-    </a>
+  <a class="topbar__hof" routerLink="/winners" title="Hall of Fame">
+    <span class="topbar__hof-icon" aria-hidden="true">🏆</span>
+    <span class="topbar__hof-text">Winners</span>
+  </a>
 
-    @if (currentUser$ | async; as user) {
-      <div class="topbar__actions">
-        <!-- Messages -->
-        <button type="button" class="icon-btn" (click)="goToMessages()" aria-label="Messages">
-          ✉️
-          @if ((unreadMessages$ | async); as unread) {
+  @if (currentUser$ | async; as user) {
+    <div class="topbar__actions">
+
+      <!-- Messages -->
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="goToMessages()"
+        aria-label="Messages">
+        ✉️
+        @if ((unreadMessages$ | async); as unread) {
+          <span class="icon-btn__badge">
+            {{ unread > 9 ? '9+' : unread }}
+          </span>
+        }
+      </button>
+
+      <!-- Notifications -->
+      <div class="menu-host">
+        <button
+          type="button"
+          class="icon-btn"
+          (click)="toggleMenu('notifications')"
+          aria-label="Notifications">
+
+          🔔
+
+          @if ((unreadNotifications$ | async); as unread) {
             <span class="icon-btn__badge">
               {{ unread > 9 ? '9+' : unread }}
             </span>
           }
         </button>
-        <!-- Notifications -->
-        <div class="menu-host">
-          <button
-            type="button"
-            class="icon-btn"
-            (click)="toggleMenu('notifications')"
-            aria-label="Notifications"
-            >
-            🔔
-            @if ((unreadNotifications$ | async); as unread) {
-              <span class="icon-btn__badge">
-                {{ unread > 9 ? '9+' : unread }}
-              </span>
+
+        @if (openMenu === 'notifications') {
+          <div class="dropdown dropdown--wide">
+            <div class="dropdown__title">Notifications</div>
+
+            @if (notifications$ | async; as items) {
+
+              @if (items.length === 0) {
+                <div class="dropdown__empty">
+                  Nothing here yet.
+                </div>
+              }
+
+              @for (n of items; track n) {
+                <button
+                  type="button"
+                  class="notif"
+                  [class.unread]="!n.isRead"
+                  (click)="openNotification(n)">
+
+                  <span class="notif__text">
+                    {{ n.text }}
+                  </span>
+
+                  <span class="notif__time">
+                    {{ n.createdAtUtc | timeAgo }}
+                  </span>
+
+                </button>
+              }
+
             }
-          </button>
-          @if (openMenu === 'notifications') {
-            <div class="dropdown dropdown--wide">
-              <div class="dropdown__title">Notifications</div>
-              @if (notifications$ | async; as items) {
-                @if (items.length === 0) {
-                  <div class="dropdown__empty">Nothing here yet.</div>
-                }
-                @for (n of items; track n) {
+          </div>
+        }
+      </div>
+
+      <!-- Avatar Menu -->
+      <div class="menu-host">
+
+        <button
+          type="button"
+          class="avatar-btn"
+          (click)="toggleMenu('avatar')"
+          aria-label="Account">
+
+          <app-avatar
+            [avatarId]="user.avatarId"
+            [size]="32">
+          </app-avatar>
+
+        </button>
+
+        @if (openMenu === 'avatar') {
+
+          <div class="dropdown">
+
+            <div class="dropdown__user">
+              <app-avatar
+                [avatarId]="user.avatarId"
+                [size]="40">
+              </app-avatar>
+
+              <div class="dropdown__user-text">
+                <strong>{{ user.displayName || 'Member' }}</strong>
+                <small>{{ user.email }}</small>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="dropdown__item"
+              (click)="goToProfile(user.id)">
+              👤 My profile
+            </button>
+
+            <button
+              type="button"
+              class="dropdown__item"
+              (click)="changingAvatar = !changingAvatar">
+              🎭 Change avatar
+            </button>
+
+            @if (changingAvatar) {
+
+              <div class="avatar-grid">
+
+                @for (a of avatars; track a) {
+
                   <button
                     type="button"
-                    class="notif"
-                    [class.unread]="!n.isRead"
-                    (click)="openNotification(n)"
-                    >
-                    <span class="notif__text">{{ n.text }}</span>
-                    <span class="notif__time">{{ n.createdAtUtc | timeAgo }}</span>
+                    class="avatar-grid__cell"
+                    [class.active]="a.id === user.avatarId"
+                    (click)="pickAvatar(a.id)"
+                    [attr.aria-label]="a.id">
+
+                    <app-avatar
+                      [avatarId]="a.id"
+                      [size]="34">
+                    </app-avatar>
+
                   </button>
+
                 }
-              }
-            </div>
-          }
-        </div>
-        <!-- Avatar menu -->
-        <div class="menu-host">
-          <button type="button" class="avatar-btn" (click)="toggleMenu('avatar')" aria-label="Account">
-            <app-avatar [avatarId]="user.avatarId" [size]="32"></app-avatar>
-          </button>
-          @if (openMenu === 'avatar') {
-            <div class="dropdown">
-              <div class="dropdown__user">
-                <app-avatar [avatarId]="user.avatarId" [size]="40"></app-avatar>
-                <div class="dropdown__user-text">
-                  <strong>{{ user.displayName || 'Member' }}</strong>
-                  <small>{{ user.email }}</small>
-                </div>
+
               </div>
-              <button type="button" class="dropdown__item" (click)="goToProfile(user.id)">
-                👤 My profile
-              </button>
-              <button type="button" class="dropdown__item" (click)="changingAvatar = !changingAvatar">
-                🎭 Change avatar
-              </button>
-              @if (changingAvatar) {
-                <div class="avatar-grid">
-                  @for (a of avatars; track a) {
-                    <button
-                      type="button"
-                      class="avatar-grid__cell"
-                      [class.active]="a.id === user.avatarId"
-                      (click)="pickAvatar(a.id)"
-                      [attr.aria-label]="a.id"
-                      >
-                      <app-avatar [avatarId]="a.id" [size]="34"></app-avatar>
-                    </button>
-                  }
-                </div>
-              }
-              <button type="button" class="dropdown__item dropdown__item--danger" (click)="onLogout()">
-                🚪 Log out
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    } @else {
-      <div class="topbar__actions">
-        <a class="btn btn--ghost" routerLink="/auth/login">Log in</a>
-        <a class="btn btn--primary" routerLink="/auth/register">Sign up</a>
-      </div>
-    }
 
+            }
 
-    @if (openMenu) {
-      <div class="topbar__backdrop" (click)="closeMenus()"></div>
-    }
-  </header>
+            <button
+              type="button"
+              class="dropdown__item dropdown__item--danger"
+              (click)="onLogout()">
+              🚪 Log out
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  } @else {
+
+    <div class="topbar__actions">
+      <a class="btn btn--ghost" routerLink="/auth/login">
+        Log in
+      </a>
+
+      <a class="btn btn--primary" routerLink="/auth/register">
+        Sign up
+      </a>
+    </div>
+
+  }
+
+  @if (openMenu) {
+    <div
+      class="topbar__backdrop"
+      (click)="closeMenus()">
+    </div>
+  }
+
+</header>

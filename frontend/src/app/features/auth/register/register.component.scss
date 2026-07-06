@@ -5,9 +5,34 @@
 .avatar-picker {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 4px;
+  gap: 8px;
 }
 
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+  justify-items: center;
+}
+
+.avatar-picker__cell {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  padding: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: var(--border);
+  }
+
+  &.active {
+    border-color: var(--reddit-orange);
+  }
+}
 .avatar-picker__cell {
   border: 2px solid transparent;
   border-radius: 50%;
