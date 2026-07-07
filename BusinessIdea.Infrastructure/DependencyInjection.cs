@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace BusinessIdea.Infrastructure;
 
@@ -22,9 +23,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureServices(
         this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException(
-                "Connection string 'DefaultConnection' was not found.");
+        var connectionString = BuildConnectionString(configuration);
 
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
@@ -91,5 +90,35 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(60));
 
         return services;
+    }
+
+    /// <summary>
+    /// Resolves the Npgsql connection string. Managed hosts such as Render supply
+    /// a URL-style value (postgres://user:pass@host/db); Npgsql needs key/value
+    /// form, so convert it when detected.
+    /// </summary>
+    private static string BuildConnectionString(IConfiguration configuration)
+    {
+        var raw = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' was not found.");
+
+        if (!raw.StartsWith("postgres://") && !raw.StartsWith("postgresql://"))
+        {
+            return raw;
+        }
+
+        var uri = new Uri(raw);
+        var userInfo = uri.UserInfo.Split(':', 2);
+
+        return new NpgsqlConnectionStringBuilder
+        {
+            Host = uri.Host,
+            Port = uri.Port > 0 ? uri.Port : 5432,
+            Username = Uri.UnescapeDataString(userInfo[0]),
+            Password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty,
+            Database = uri.AbsolutePath.TrimStart('/'),
+            SslMode = SslMode.Require
+        }.ConnectionString;
     }
 }

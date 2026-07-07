@@ -8,6 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Managed hosts (Render, etc.) inject the port to listen on via PORT.
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
+
 // --- Application composition ------------------------------------------------
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -77,6 +84,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+// Serve the compiled Angular app (copied into wwwroot at image build time).
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
@@ -84,5 +95,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<BusinessIdea.Web.Hubs.ChatHub>("/hubs/chat");
+
+// Any non-API route falls through to the SPA so client-side routing works.
+app.MapFallbackToFile("index.html");
 
 app.Run();

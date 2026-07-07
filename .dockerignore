@@ -1,0 +1,11 @@
+**/bin
+**/obj
+**/.vs
+.git
+.gitignore
+frontend/node_modules
+frontend/dist
+frontend/.angular
+**/appsettings.Development.json
+Desktop
+*.md
