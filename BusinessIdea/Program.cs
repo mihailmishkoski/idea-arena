@@ -1,9 +1,12 @@
 using BusinessIdea.Application;
 using BusinessIdea.Application.Common.Interfaces;
+using BusinessIdea.Application.Features.Outbox;
+using BusinessIdea.Application.Features.Winners;
 using BusinessIdea.Infrastructure;
 using BusinessIdea.Infrastructure.Persistence;
 using BusinessIdea.Web.Filters;
 using BusinessIdea.Web.Services;
+using BusinessIdea.Worker;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +22,18 @@ if (!string.IsNullOrWhiteSpace(port))
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddAuthEmailServices(builder.Configuration);
+
+// Background jobs (outbox -> notifications + AI critic, plus weekly winners)
+// run in-process, so one container hosts the whole app on the free tier.
+builder.Services.AddOutboxSideEffectServices(builder.Configuration);
+builder.Services.AddScoped<IOutboxProcessor, IdeaCreatedProcessor>();
+builder.Services.AddScoped<IOutboxProcessor, ChatRequestedProcessor>();
+builder.Services.AddScoped<IOutboxProcessor, ChatAcceptedProcessor>();
+builder.Services.AddScoped<IOutboxProcessor, CofounderAppliedProcessor>();
+builder.Services.AddScoped<IOutboxProcessor, IdeaWonProcessor>();
+builder.Services.AddScoped<IWinnerDeclarationService, WinnerDeclarationService>();
+builder.Services.AddHostedService<OutboxProcessorService>();
+builder.Services.AddHostedService<WinnerDeclarationHostedService>();
 
 // The current-user abstraction is implemented in the web layer.
 builder.Services.AddHttpContextAccessor();
