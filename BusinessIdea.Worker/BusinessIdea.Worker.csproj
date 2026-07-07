@@ -19,4 +19,14 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The API references this project to host its background jobs in-process
+         and supplies its own appsettings, so keep these out of a referencing
+         project's publish output to avoid duplicate-file conflicts (NETSDK1152). -->
+    <Content Update="appsettings.json" CopyToPublishDirectory="Never" />
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+    <None Update="appsettings.json" CopyToPublishDirectory="Never" />
+    <None Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
 </Project>
