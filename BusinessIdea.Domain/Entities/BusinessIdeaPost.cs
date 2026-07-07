@@ -1,4 +1,6 @@
 using BusinessIdea.Domain.Common;
+using BusinessIdea.Domain.Common;
+using BusinessIdea.Domain.Enums;
 
 namespace BusinessIdea.Domain.Entities;
 
@@ -31,6 +33,9 @@ public class BusinessIdeaPost : BaseEntity, IAuditableEntity
 
     /// <summary>Link to a video pitch. Optional.</summary>
     public string? VideoPitchUrl { get; set; }
+
+    /// <summary>Up to 3 categories this idea belongs to (enforced at the command validation layer).</summary>
+    public List<BusinessIdeaCategory> Categories { get; set; } = new();
 
     /// <summary>Identity id of the user who authored the idea.</summary>
     public string AuthorId { get; set; } = string.Empty;
