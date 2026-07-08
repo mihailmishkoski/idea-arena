@@ -81,4 +81,70 @@ public class CreateBusinessIdeaCommandTests
         IdeaCreatedPayload payload = OutboxMessageFactory.Deserialize<IdeaCreatedPayload>(outboxMessage);
         Assert.Equal(result, payload.PostId);
     }
+
+    [Fact]
+    public async Task WhenSignedIn_ShouldPersistCategoriesUnchanged()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory>
+        {
+            BusinessIdeaCategory.Fintech,
+            BusinessIdeaCategory.Health,
+        };
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+        //Act
+        await handler.Handle(command, default);
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Equal(categories, idea.Categories);
+    }
+
+    [Fact]
+    public async Task WhenOptionalFieldsProvided_ShouldTrimThemAllBeforeSaving()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(
+            competition: "  Big Corp  ",
+            incomeStrategy: "  Subscriptions  ",
+            exitStrategy: "  Acquisition  ",
+            videoPitchUrl: "  https://example.com/pitch  ");
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+        //Act
+        await handler.Handle(command, default);
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Equal("Big Corp", idea.Competition);
+        Assert.Equal("Subscriptions", idea.IncomeStrategy);
+        Assert.Equal("Acquisition", idea.ExitStrategy);
+        Assert.Equal("https://example.com/pitch", idea.VideoPitchUrl);
+    }
+
+    [Fact]
+    public async Task WhenOptionalFieldsAreNull_ShouldSaveWithoutThrowing()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand();
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+        //Act
+        await handler.Handle(command, default);
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Null(idea.Competition);
+        Assert.Null(idea.IncomeStrategy);
+        Assert.Null(idea.ExitStrategy);
+        Assert.Null(idea.VideoPitchUrl);
+    }
 }

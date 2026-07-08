@@ -21,7 +21,7 @@ public class BusinessIdeaPostConfiguration : IEntityTypeConfiguration<BusinessId
         builder.Property(x => x.VideoPitchUrl).HasMaxLength(2048);
 
         builder.Property(x => x.Categories)
-            .HasColumnType("integer[]");
+            .HasColumnType("smallint[]");
 
         builder.Property(x => x.AuthorId).IsRequired();
 

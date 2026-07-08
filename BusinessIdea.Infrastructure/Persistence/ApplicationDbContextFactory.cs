@@ -12,16 +12,16 @@ namespace BusinessIdea.Infrastructure.Persistence;
 public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     public ApplicationDbContext CreateDbContext(string[] args)
-    {
-        // Commands that only build the model (migrations add) work without credentials;
-        // ones that connect (database update) need BUSINESSIDEA_CONNECTION set.
-        var connectionString = Environment.GetEnvironmentVariable("BUSINESSIDEA_CONNECTION")
-            ?? "Host=localhost;Port=5432;Database=businessIdea;Username=postgres";
+{
+    // Commands that only build the model (migrations add) work without credentials;
+    // ones that connect (database update) need BUSINESSIDEA_CONNECTION set.
+    var connectionString = Environment.GetEnvironmentVariable("BUSINESSIDEA_CONNECTION")
+        ?? "Host=localhost;Port=5432;Database=businessIdea;Username=postgres";
 
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseNpgsql(connectionString)
-            .Options;
+    var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+        .UseNpgsql(connectionString)
+        .Options;
 
-        return new ApplicationDbContext(options);
-    }
+    return new ApplicationDbContext(options);
+}
 }

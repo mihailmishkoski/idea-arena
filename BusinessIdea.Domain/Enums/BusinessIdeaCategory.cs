@@ -7,7 +7,7 @@ namespace BusinessIdea.Domain.Enums;
 /// restaurant payments app is both Food and Fintech — without turning tagging
 /// into a free-for-all.
 /// </summary>
-public enum BusinessIdeaCategory
+public enum BusinessIdeaCategory : byte
 {
     Tech = 0,
     SaaS = 1,
