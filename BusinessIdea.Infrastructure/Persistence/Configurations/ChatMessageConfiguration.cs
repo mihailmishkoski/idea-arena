@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class ChatMessageConfiguration : IEntityTypeConfiguration<ChatMessage>
+public class ChatMessageConfiguration : BaseEntityConfiguration<ChatMessage>
 {
     public void Configure(EntityTypeBuilder<ChatMessage> builder)
     {

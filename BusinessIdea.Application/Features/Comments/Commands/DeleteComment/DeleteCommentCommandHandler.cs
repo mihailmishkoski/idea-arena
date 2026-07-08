@@ -28,7 +28,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand>
             throw new ForbiddenAccessException("You can only delete your own comments.");
         }
 
-        _context.Comments.Remove(comment);
+        comment.DeletedOn = DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

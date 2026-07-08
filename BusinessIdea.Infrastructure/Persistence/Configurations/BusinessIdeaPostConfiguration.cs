@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class BusinessIdeaPostConfiguration : IEntityTypeConfiguration<BusinessIdeaPost>
+public class BusinessIdeaPostConfiguration : BaseEntityConfiguration<BusinessIdeaPost>
 {
     public void Configure(EntityTypeBuilder<BusinessIdeaPost> builder)
     {
@@ -19,7 +19,6 @@ public class BusinessIdeaPostConfiguration : IEntityTypeConfiguration<BusinessId
         builder.Property(x => x.ExitStrategy).HasMaxLength(2000);
         builder.Property(x => x.VideoPitchUrl).HasMaxLength(2048);
         builder.Property(x => x.AuthorId).IsRequired();
-
         builder.HasIndex(x => x.AuthorId);
         builder.HasIndex(x => x.CreatedAtUtc);
 

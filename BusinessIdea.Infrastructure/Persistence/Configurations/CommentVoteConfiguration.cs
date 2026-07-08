@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class CommentVoteConfiguration : IEntityTypeConfiguration<CommentVote>
+public class CommentVoteConfiguration : BaseEntityConfiguration<CommentVote>
 {
     public void Configure(EntityTypeBuilder<CommentVote> builder)
     {
