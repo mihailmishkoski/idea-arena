@@ -1,5 +1,8 @@
 <div class="page">
   <div class="create card">
+    <a routerLink="/" class="create__back">
+  <span class="create__back-icon">←</span> Back to feed
+</a>
     <h1 class="create__title">Create an Idea</h1>
     <p class="create__subtitle">
       Pitch your business. Fields marked <span class="req">*</span> are required.
@@ -45,14 +48,33 @@
       </div>
 
       <div class="field">
-        <label for="solution">Solution <span class="req">*</span></label>
-        <textarea id="solution" formControlName="solution"
-        placeholder="How does it solve the problem?"></textarea>
-        @if (form.get('solution')?.touched && form.get('solution')?.invalid) {
-          <small class="field__error"
+          <label for="solution">Solution <span class="req">*</span></label>
+          <textarea id="solution" formControlName="solution"
+          placeholder="How does it solve the problem?"></textarea>
+          @if (form.get('solution')?.touched && form.get('solution')?.invalid) {
+            <small class="field__error">
+              Describe your solution.
+            </small>
+          }
+</div>
+
+      <div class="field">
+        <label>Categories <span class="req">*</span> <small>(up to 3)</small></label>
+        <div class="category-picker">
+          @for (category of allCategories; track category) {
+            <button
+              type="button"
+              class="category-chip"
+              [class.category-chip--selected]="isCategorySelected(category)"
+              [disabled]="isCategoryDisabled(category)"
+              (click)="toggleCategory(category)"
             >
-            Describe your solution.
-          </small>
+              {{ categoryLabel(category) }}
+            </button>
+          }
+        </div>
+        @if (categoriesTouched && selectedCategories.length === 0) {
+          <small class="field__error">Pick at least one category.</small>
         }
       </div>
 

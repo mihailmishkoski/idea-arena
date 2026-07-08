@@ -30,6 +30,42 @@
       }
     </div>
 
+    <div class="category-filter" [class.open]="categoryMenuOpen">
+      <button type="button" class="sort__button" (click)="toggleCategoryMenu()">
+        <span class="sort__label">
+          Categories
+          @if (selectedCategories.length > 0) {
+            <span class="category-filter__count">({{ selectedCategories.length }})</span>
+          }
+        </span>
+        <span class="sort__caret" aria-hidden="true"></span>
+      </button>
+
+      @if (categoryMenuOpen) {
+        <div class="sort__backdrop" (click)="toggleCategoryMenu()"></div>
+      }
+
+      @if (categoryMenuOpen) {
+        <div class="category-filter__menu">
+          @for (category of allCategories; track category) {
+            <button
+              type="button"
+              class="category-chip"
+              [class.category-chip--selected]="isCategorySelected(category)"
+              (click)="toggleCategory(category)"
+            >
+              {{ categoryLabel(category) }}
+            </button>
+          }
+          @if (selectedCategories.length > 0) {
+            <button type="button" class="category-filter__clear" (click)="clearCategories()">
+              Clear all
+            </button>
+          }
+        </div>
+      }
+    </div>
+
     <a class="feed-toolbar__create" routerLink="/submit">+ Create Idea</a>
   </div>
 

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from 
 import { Router } from '@angular/router';
 import {
   BusinessIdeaSummaryViewModel,
+  BusinessIdeaCategory,
   HOT_SCORE_THRESHOLD,
   VoteDirection,
   ideaExpiresAt,
@@ -51,6 +52,10 @@ export class IdeaCardComponent {
       return `closes in ${hours}h`;
     }
     return 'closes soon';
+  }
+
+  categoryLabel(category: BusinessIdeaCategory): string {
+    return BusinessIdeaCategory[category];
   }
 
   openDetail(): void {

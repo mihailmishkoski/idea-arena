@@ -16,3 +16,73 @@
 .req {
   color: var(--reddit-orange);
 }
+.category-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.category-chip {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #f3f0fb;
+  color: #6b4fbb;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  // Give each chip a distinct pastel like the screenshot,
+  // cycling through the list regardless of category count.
+  &:nth-of-type(8n + 1) { background: #f3f0fb; color: #6b4fbb; } // purple
+  &:nth-of-type(8n + 2) { background: #fdeceb; color: #d1554a; } // red
+  &:nth-of-type(8n + 3) { background: #e9f7ef; color: #2f9e5c; } // green
+  &:nth-of-type(8n + 4) { background: #fdf1e3; color: #c8822a; } // orange
+  &:nth-of-type(8n + 5) { background: #e8f6f3; color: #2a9d8f; } // teal
+  &:nth-of-type(8n + 6) { background: #eaf0fd; color: #3f66c9; } // blue
+  &:nth-of-type(8n + 7) { background: #fdeaf1; color: #c93f7a; } // pink
+  &:nth-of-type(8n + 8) { background: #f2f2f2; color: #555; }    // gray
+}
+
+.category-chip--selected {
+  border-color: currentColor;
+  font-weight: 700;
+  background: #fff !important;
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.create__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b4fbb;
+  background: #f3f0fb;
+  text-decoration: none;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #e7e0f9;
+    transform: translateX(-2px);
+  }
+}
+
+.create__back-icon {
+  font-size: 15px;
+  line-height: 1;
+}

@@ -43,6 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   
   isAuthPage = false;
+  isSubmitPage = false;
 
   private readonly minChars = 3;
   private readonly searchInput$ = new Subject<string>();
@@ -56,28 +57,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+  this.searchInput$
+    .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+    .subscribe((term) => this.runSearch(term));
 
-    this.searchInput$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((term) => this.runSearch(term));
+  this.isAuthPage = this.router.url.startsWith('/auth');
+  this.isSubmitPage = this.router.url.startsWith('/submit');
 
-    // Hide search bar on auth pages
-    this.isAuthPage = this.router.url.startsWith('/auth');
-
-    this.router.events
-      .pipe(
-        filter(event => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        this.isAuthPage = this.router.url.startsWith('/auth');
-      });
-  }
-
+  this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd), takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.isAuthPage = this.router.url.startsWith('/auth');
+      this.isSubmitPage = this.router.url.startsWith('/submit');
+    });
+}
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

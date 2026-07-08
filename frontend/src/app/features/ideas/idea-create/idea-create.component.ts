@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { CreateIdeaRequest, IdeasApiService } from '@core';
+import { CreateIdeaRequest, IdeasApiService, BusinessIdeaCategory } from '@core';
 
 @Component({
     selector: 'app-idea-create',
@@ -16,6 +16,13 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   submitting = false;
   errorMessage: string | null = null;
+
+  readonly maxCategories = 3;
+  readonly allCategories = Object.values(BusinessIdeaCategory).filter(
+    (v) => typeof v === 'number'
+  ) as BusinessIdeaCategory[];
+  selectedCategories: BusinessIdeaCategory[] = [];
+  categoriesTouched = false;
 
   private readonly urlPattern = /^https?:\/\/.+/i;
   private readonly destroy$ = new Subject<void>();
@@ -44,8 +51,34 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  categoryLabel(category: BusinessIdeaCategory): string {
+    return BusinessIdeaCategory[category];
+  }
+
+  isCategorySelected(category: BusinessIdeaCategory): boolean {
+    return this.selectedCategories.includes(category);
+  }
+
+  isCategoryDisabled(category: BusinessIdeaCategory): boolean {
+    return (
+      !this.isCategorySelected(category) &&
+      this.selectedCategories.length >= this.maxCategories
+    );
+  }
+
+  toggleCategory(category: BusinessIdeaCategory): void {
+    this.categoriesTouched = true;
+    if (this.isCategorySelected(category)) {
+      this.selectedCategories = this.selectedCategories.filter((c) => c !== category);
+    } else if (this.selectedCategories.length < this.maxCategories) {
+      this.selectedCategories = [...this.selectedCategories, category];
+    }
+  }
+
   onSubmit(): void {
-    if (this.form.invalid || this.submitting) {
+    this.categoriesTouched = true;
+
+    if (this.form.invalid || this.selectedCategories.length === 0 || this.submitting) {
       this.form.markAllAsTouched();
       return;
     }
@@ -78,6 +111,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
       incomeStrategy: trimOrNull(v.incomeStrategy),
       exitStrategy: trimOrNull(v.exitStrategy),
       videoPitchUrl: trimOrNull(v.videoPitchUrl),
+      categories: this.selectedCategories,
     };
   }
 }

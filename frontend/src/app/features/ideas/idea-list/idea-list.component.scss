@@ -180,3 +180,68 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+/* Category filter ----------------------------------------------------------- */
+.category-filter {
+  position: relative;
+  margin-left: 8px;
+}
+
+.category-filter__count {
+  color: var(--reddit-orange);
+}
+
+.category-filter__menu {
+  position: absolute;
+  z-index: 31;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 260px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.category-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    border-color: var(--reddit-blue);
+  }
+}
+
+.category-chip--selected {
+  background: var(--reddit-orange);
+  border-color: var(--reddit-orange);
+  color: #fff;
+}
+
+.category-filter__clear {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--reddit-blue);
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import {
   AuthService,
+  BusinessIdeaCategory,
   BusinessIdeaSummaryViewModel,
   IdeaSortOrder,
   IdeasApiService,
@@ -38,6 +39,12 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   sort: IdeaSortOrder = IdeaSortOrder.Top;
   search = '';
   sortMenuOpen = false;
+
+  readonly allCategories = Object.values(BusinessIdeaCategory).filter(
+    (v) => typeof v === 'number'
+  ) as BusinessIdeaCategory[];
+  selectedCategories: BusinessIdeaCategory[] = [];
+  categoryMenuOpen = false;
 
   readonly SortOrder = IdeaSortOrder;
   readonly sortOptions: SortOptionViewModel[] = [
@@ -68,8 +75,6 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // The header drives search via the `q` query param; react to it (and the
-    // initial value) by reloading the feed.
     this.route.queryParamMap
       .pipe(
         map((params) => params.get('q') ?? ''),
@@ -115,7 +120,6 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sortOptions.find((o) => o.value === this.sort) ?? this.sortOptions[1];
   }
 
-  /** The overall #1 closed idea is the winner. */
   isWinner(index: number): boolean {
     return this.isWinnersView && index === 0;
   }
@@ -130,6 +134,30 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.sort = sort;
+    this.fetchData();
+  }
+
+  toggleCategoryMenu(): void {
+    this.categoryMenuOpen = !this.categoryMenuOpen;
+  }
+
+  categoryLabel(category: BusinessIdeaCategory): string {
+    return BusinessIdeaCategory[category];
+  }
+
+  isCategorySelected(category: BusinessIdeaCategory): boolean {
+    return this.selectedCategories.includes(category);
+  }
+
+  toggleCategory(category: BusinessIdeaCategory): void {
+    this.selectedCategories = this.isCategorySelected(category)
+      ? this.selectedCategories.filter((c) => c !== category)
+      : [...this.selectedCategories, category];
+    this.fetchData();
+  }
+
+  clearCategories(): void {
+    this.selectedCategories = [];
     this.fetchData();
   }
 
@@ -166,7 +194,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ideas = [];
 
     this.ideasService
-      .getIdeas(this.sort, 1, this.pageSize, this.search)
+      .getIdeas(this.sort, 1, this.pageSize, this.search, this.selectedCategories)
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -191,7 +219,7 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loadingMore = true;
     this.ideasService
-      .getIdeas(this.sort, this.pageNumber + 1, this.pageSize, this.search)
+      .getIdeas(this.sort, this.pageNumber + 1, this.pageSize, this.search, this.selectedCategories)
       .pipe(
         finalize(() => {
           this.loadingMore = false;
