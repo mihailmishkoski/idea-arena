@@ -6,8 +6,9 @@ namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
 public class PostVoteConfiguration : BaseEntityConfiguration<PostVote>
 {
-    public void Configure(EntityTypeBuilder<PostVote> builder)
-    {
+    public override void Configure(EntityTypeBuilder<PostVote> builder)
+    {       base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.UserId).IsRequired();

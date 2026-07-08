@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class OutboxMessageConfiguration : BaseEntityConfiguration<OutboxMessage>
+public  class OutboxMessageConfiguration : BaseEntityConfiguration<OutboxMessage>
 {
-    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
-    {
+    public override void Configure(EntityTypeBuilder<OutboxMessage> builder)
+    {       base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Type).IsRequired().HasMaxLength(100);

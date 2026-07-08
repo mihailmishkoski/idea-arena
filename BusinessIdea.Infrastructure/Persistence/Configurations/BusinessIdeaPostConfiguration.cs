@@ -6,8 +6,9 @@ namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
 public class BusinessIdeaPostConfiguration : BaseEntityConfiguration<BusinessIdeaPost>
 {
-    public void Configure(EntityTypeBuilder<BusinessIdeaPost> builder)
-    {
+    public override void Configure(EntityTypeBuilder<BusinessIdeaPost> builder)
+    {      base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(150);

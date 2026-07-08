@@ -6,8 +6,10 @@ namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
 public class CommentConfiguration : BaseEntityConfiguration<Comment>
 {
-    public void Configure(EntityTypeBuilder<Comment> builder)
+    public override void Configure(EntityTypeBuilder<Comment> builder)
     {
+        base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.AuthorId).IsRequired();
