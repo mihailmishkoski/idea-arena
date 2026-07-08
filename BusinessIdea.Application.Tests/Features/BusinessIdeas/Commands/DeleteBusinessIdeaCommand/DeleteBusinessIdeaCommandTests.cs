@@ -77,7 +77,8 @@ public class DeleteBusinessIdeaCommandTests
         await handler.Handle(command, default);
 
         //Assert
-        Assert.Empty(businessIdeas);
+         Assert.Single(businessIdeas);
+         Assert.NotNull(businessIdeas[0].DeletedOn);
         contextStub.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }
