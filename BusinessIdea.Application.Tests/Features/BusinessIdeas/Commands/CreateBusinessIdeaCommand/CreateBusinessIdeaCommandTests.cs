@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using BusinessIdea.Domain.Enums;
 
 public class CreateBusinessIdeaCommandTests
 {
@@ -146,5 +147,77 @@ public class CreateBusinessIdeaCommandTests
         Assert.Null(idea.IncomeStrategy);
         Assert.Null(idea.ExitStrategy);
         Assert.Null(idea.VideoPitchUrl);
+    }
+
+    [Fact]
+    public async Task WhenCategoriesAtMaxAllowed_ShouldPersistAllThree()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory>
+        {
+            BusinessIdeaCategory.Tech,
+            BusinessIdeaCategory.SaaS,
+            BusinessIdeaCategory.Fintech,
+        };
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+
+        //Act
+        await handler.Handle(command, default);
+
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Equal(3, idea.Categories.Count);
+        Assert.Equal(categories, idea.Categories);
+    }
+
+    [Fact]
+    public async Task WhenSingleCategoryProvided_ShouldPersistExactlyOne()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory> { BusinessIdeaCategory.Sustainability };
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+
+        //Act
+        await handler.Handle(command, default);
+
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Single(idea.Categories);
+        Assert.Equal(BusinessIdeaCategory.Sustainability, idea.Categories[0]);
+    }
+
+    [Fact]
+    public async Task WhenCategoryOrderProvided_ShouldPreserveOrderOnSave()
+    {
+        //Arrange
+        List<BusinessIdeaPost> businessIdeas = new List<BusinessIdeaPost>();
+        Mock<IApplicationDbContext> contextStub = ApplicationDbContextMock.Create(businessIdeas: businessIdeas);
+        Mock<ICurrentUserService> currentUserStub = new Mock<ICurrentUserService>();
+        currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
+        List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory>
+        {
+            BusinessIdeaCategory.Travel,
+            BusinessIdeaCategory.Agriculture,
+        };
+        CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
+        CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
+
+        //Act
+        await handler.Handle(command, default);
+
+        //Assert
+        BusinessIdeaPost idea = Assert.Single(businessIdeas);
+        Assert.Equal(BusinessIdeaCategory.Travel, idea.Categories[0]);
+        Assert.Equal(BusinessIdeaCategory.Agriculture, idea.Categories[1]);
     }
 }
