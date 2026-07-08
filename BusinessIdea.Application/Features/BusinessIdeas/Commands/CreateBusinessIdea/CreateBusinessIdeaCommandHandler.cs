@@ -22,7 +22,7 @@ public class CreateBusinessIdeaCommandHandler : IRequestHandler<CreateBusinessId
         var userId = _currentUser.UserId
             ?? throw new ForbiddenAccessException("You must be signed in to post an idea.");
 
-        var idea = new BusinessIdeaPost
+       var idea = new BusinessIdeaPost
         {
             Name = request.Name.Trim(),
             UniqueValueProposition = request.UniqueValueProposition.Trim(),
@@ -32,7 +32,8 @@ public class CreateBusinessIdeaCommandHandler : IRequestHandler<CreateBusinessId
             IncomeStrategy = request.IncomeStrategy?.Trim(),
             ExitStrategy = request.ExitStrategy?.Trim(),
             VideoPitchUrl = request.VideoPitchUrl?.Trim(),
-            AuthorId = userId
+            AuthorId = userId,
+            Categories = request.Categories
         };
 
         _context.BusinessIdeas.Add(idea);

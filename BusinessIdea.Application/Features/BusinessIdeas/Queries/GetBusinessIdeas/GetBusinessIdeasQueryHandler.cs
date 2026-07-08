@@ -40,6 +40,16 @@ public class GetBusinessIdeasQueryHandler : IRequestHandler<GetBusinessIdeasQuer
                 EF.Functions.Like(i.Problem.ToLower(), term));
         }
 
+        // Category filter: an idea matches if it has at least one category
+        // in common with the requested set. Empty/null means no filtering.
+        if (request.Categories is { Count: > 0 })
+        {
+            var categoryFilter = request.Categories.ToArray();
+            query = query.Where(i => i.Categories.Any(c => categoryFilter.Contains(c)));
+        }
+
+
+
         // "Winners" shows closed ideas; every other sort shows only active ones.
         query = request.SortBy == IdeaSortOrder.Winners
             ? query.Where(i => i.CreatedAtUtc <= cutoff)
@@ -67,6 +77,7 @@ public class GetBusinessIdeasQueryHandler : IRequestHandler<GetBusinessIdeasQuer
             Id = i.Id,
             Name = i.Name,
             UniqueValueProposition = i.UniqueValueProposition,
+            Categories = i.Categories,
             AuthorId = i.AuthorId,
             AuthorName = _context.Authors
                 .Where(u => u.Id == i.AuthorId)

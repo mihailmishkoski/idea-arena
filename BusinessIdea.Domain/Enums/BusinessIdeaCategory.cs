@@ -18,5 +18,9 @@ public enum BusinessIdeaCategory
     Ecommerce = 6,
     Entertainment = 7,
     Travel = 8,
-    Sustainability = 9
+    Sustainability = 9,
+    Agriculture = 10,
+    RealEstate = 11,
+    Gaming = 12,
+    Legal = 13
 }
