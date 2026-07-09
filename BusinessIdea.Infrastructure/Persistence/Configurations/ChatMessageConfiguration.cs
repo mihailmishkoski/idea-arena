@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class ChatMessageConfiguration : IEntityTypeConfiguration<ChatMessage>
+public class ChatMessageConfiguration : BaseEntityConfiguration<ChatMessage>
 {
-    public void Configure(EntityTypeBuilder<ChatMessage> builder)
-    {
+    public override void Configure(EntityTypeBuilder<ChatMessage> builder)
+    {   base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.SenderId).IsRequired();

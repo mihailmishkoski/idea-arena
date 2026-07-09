@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class CommentVoteConfiguration : IEntityTypeConfiguration<CommentVote>
+public class CommentVoteConfiguration : BaseEntityConfiguration<CommentVote>
 {
-    public void Configure(EntityTypeBuilder<CommentVote> builder)
-    {
+    public override void Configure(EntityTypeBuilder<CommentVote> builder)
+    {       base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.UserId).IsRequired();

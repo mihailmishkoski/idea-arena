@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
+public class NotificationConfiguration : BaseEntityConfiguration<Notification>
 {
-    public void Configure(EntityTypeBuilder<Notification> builder)
-    {
+    public override void Configure(EntityTypeBuilder<Notification> builder)
+    {    base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.UserId).IsRequired();

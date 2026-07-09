@@ -7,7 +7,7 @@ namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 public class WeeklyWinnerConfiguration : IEntityTypeConfiguration<WeeklyWinner>
 {
     public void Configure(EntityTypeBuilder<WeeklyWinner> builder)
-    {
+    {   
         builder.HasKey(w => w.Id);
 
         // One winner per competition week.

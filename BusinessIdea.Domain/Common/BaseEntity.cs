@@ -7,4 +7,5 @@ namespace BusinessIdea.Domain.Common;
 public abstract class BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTime? DeletedOn { get; set; }
 }

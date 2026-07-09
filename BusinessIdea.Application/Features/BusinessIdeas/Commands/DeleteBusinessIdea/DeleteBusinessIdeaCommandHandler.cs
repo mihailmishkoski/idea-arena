@@ -27,7 +27,7 @@ public class DeleteBusinessIdeaCommandHandler : IRequestHandler<DeleteBusinessId
             throw new ForbiddenAccessException("You can only delete your own ideas.");
         }
 
-        _context.BusinessIdeas.Remove(idea);
+        idea.DeletedOn = DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

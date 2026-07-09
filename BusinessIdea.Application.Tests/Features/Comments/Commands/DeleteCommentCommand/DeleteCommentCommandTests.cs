@@ -77,7 +77,8 @@ public class DeleteCommentCommandTests
         await handler.Handle(command, default);
 
         //Assert
-        Assert.Empty(comments);
+        Assert.Single(comments);
+        Assert.NotNull(comments[0].DeletedOn);
         contextStub.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }

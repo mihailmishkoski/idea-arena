@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BusinessIdea.Infrastructure.Persistence.Configurations;
 
-public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
+public class ConversationConfiguration : BaseEntityConfiguration<Conversation>
 {
-    public void Configure(EntityTypeBuilder<Conversation> builder)
-    {
+    public override void Configure(EntityTypeBuilder<Conversation> builder)
+    {       base.Configure(builder);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.RequesterId).IsRequired();
