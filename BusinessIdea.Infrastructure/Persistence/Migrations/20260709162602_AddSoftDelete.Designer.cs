@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BusinessIdea.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260708184630_AddSoftDelete")]
+    [Migration("20260709162602_AddSoftDelete")]
     partial class AddSoftDelete
     {
         /// <inheritdoc />
