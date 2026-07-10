@@ -160,8 +160,8 @@ public class CreateBusinessIdeaCommandTests
         List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory>
         {
             BusinessIdeaCategory.Tech,
-            BusinessIdeaCategory.SaaS,
             BusinessIdeaCategory.Fintech,
+            BusinessIdeaCategory.Health,
         };
         CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
         CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
@@ -206,8 +206,8 @@ public class CreateBusinessIdeaCommandTests
         currentUserStub.Setup(x => x.UserId).Returns(CreateBusinessIdeaCommandTestsHelper.UserId);
         List<BusinessIdeaCategory> categories = new List<BusinessIdeaCategory>
         {
-            BusinessIdeaCategory.Travel,
-            BusinessIdeaCategory.Agriculture,
+            BusinessIdeaCategory.Entertainment,
+            BusinessIdeaCategory.Food,
         };
         CreateBusinessIdeaCommand command = CreateBusinessIdeaCommandTestsHelper.GetCommand(categories: categories);
         CreateBusinessIdeaCommandHandler handler = new CreateBusinessIdeaCommandHandler(contextStub.Object, currentUserStub.Object);
@@ -217,7 +217,7 @@ public class CreateBusinessIdeaCommandTests
 
         //Assert
         BusinessIdeaPost idea = Assert.Single(businessIdeas);
-        Assert.Equal(BusinessIdeaCategory.Travel, idea.Categories[0]);
-        Assert.Equal(BusinessIdeaCategory.Agriculture, idea.Categories[1]);
+        Assert.Equal(BusinessIdeaCategory.Entertainment, idea.Categories[0]);
+        Assert.Equal(BusinessIdeaCategory.Food, idea.Categories[1]);
     }
 }
