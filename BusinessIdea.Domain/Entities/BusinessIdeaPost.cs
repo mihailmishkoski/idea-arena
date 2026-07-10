@@ -1,5 +1,4 @@
 using BusinessIdea.Domain.Common;
-using BusinessIdea.Domain.Common;
 using BusinessIdea.Domain.Enums;
 
 namespace BusinessIdea.Domain.Entities;
@@ -46,3 +45,4 @@ public class BusinessIdeaPost : BaseEntity, IAuditableEntity
     public ICollection<PostVote> Votes { get; set; } = new List<PostVote>();
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }
+

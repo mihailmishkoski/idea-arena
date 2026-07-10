@@ -16,6 +16,7 @@
 .req {
   color: var(--reddit-orange);
 }
+
 .category-picker {
   display: flex;
   flex-wrap: wrap;
@@ -24,6 +25,7 @@
 }
 
 .category-chip {
+  position: relative;
   padding: 8px 18px;
   border-radius: 999px;
   border: 1px solid transparent;
@@ -32,15 +34,21 @@
   cursor: pointer;
   background: #f3f0fb;
   color: #6b4fbb;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease, filter 0.15s ease;
 
   &:hover:not(:disabled) {
     filter: brightness(0.96);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   &:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: not-allowed;
+    filter: grayscale(0.3);
   }
 
   // Give each chip a distinct pastel like the screenshot,
@@ -59,7 +67,19 @@
   border-color: currentColor;
   font-weight: 700;
   background: #fff !important;
-  box-shadow: 0 0 0 1px currentColor;
+  box-shadow: 0 0 0 1.5px currentColor, 0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px) scale(1.03);
+  padding-left: 28px;
+
+  &::before {
+    content: '✓';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+  }
 }
 
 .create__back {

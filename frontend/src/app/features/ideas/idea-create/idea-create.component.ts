@@ -23,6 +23,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
   ) as BusinessIdeaCategory[];
   selectedCategories: BusinessIdeaCategory[] = [];
   categoriesTouched = false;
+  categoriesAtMax = false;
 
   private readonly urlPattern = /^https?:\/\/.+/i;
   private readonly destroy$ = new Subject<void>();
@@ -60,10 +61,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
   }
 
   isCategoryDisabled(category: BusinessIdeaCategory): boolean {
-    return (
-      !this.isCategorySelected(category) &&
-      this.selectedCategories.length >= this.maxCategories
-    );
+    return !this.isCategorySelected(category) && this.categoriesAtMax;
   }
 
   toggleCategory(category: BusinessIdeaCategory): void {
@@ -73,6 +71,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
     } else if (this.selectedCategories.length < this.maxCategories) {
       this.selectedCategories = [...this.selectedCategories, category];
     }
+    this.categoriesAtMax = this.selectedCategories.length >= this.maxCategories;
   }
 
   onSubmit(): void {
