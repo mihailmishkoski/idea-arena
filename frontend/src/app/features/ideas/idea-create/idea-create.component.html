@@ -61,19 +61,19 @@
       <div class="field">
         <label>Categories <span class="req">*</span> <small>(up to 3)</small></label>
         <div class="category-picker">
-          @for (category of allCategories; track category) {
+          @for (chip of categoryChips; track chip.value) {
             <button
               type="button"
               class="category-chip"
-              [class.category-chip--selected]="isCategorySelected(category)"
-              [disabled]="isCategoryDisabled(category)"
-              (click)="toggleCategory(category)"
+              [class.category-chip--selected]="chip.selected"
+              [disabled]="chip.disabled"
+              (click)="toggleCategory(chip)"
             >
-              {{ categoryLabel(category) }}
+              {{ chip.label }}
             </button>
           }
         </div>
-        @if (categoriesTouched && selectedCategories.length === 0) {
+        @if (categoriesTouched && selectedCount === 0) {
           <small class="field__error">Pick at least one category.</small>
         }
       </div>
@@ -114,3 +114,4 @@
       </form>
     </div>
   </div>
+

@@ -5,6 +5,13 @@ import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { CreateIdeaRequest, IdeasApiService, BusinessIdeaCategory } from '@core';
 
+interface CategoryChip {
+  value: BusinessIdeaCategory;
+  label: string;
+  selected: boolean;
+  disabled: boolean;
+}
+
 @Component({
     selector: 'app-idea-create',
     templateUrl: './idea-create.component.html',
@@ -21,9 +28,15 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
   readonly allCategories = Object.values(BusinessIdeaCategory).filter(
     (v) => typeof v === 'number'
   ) as BusinessIdeaCategory[];
-  selectedCategories: BusinessIdeaCategory[] = [];
+
+  categoryChips: CategoryChip[] = this.allCategories.map(value => ({
+    value,
+    label: BusinessIdeaCategory[value],
+    selected: false,
+    disabled: false,
+  }));
+
   categoriesTouched = false;
-  categoriesAtMax = false;
 
   private readonly urlPattern = /^https?:\/\/.+/i;
   private readonly destroy$ = new Subject<void>();
@@ -52,32 +65,29 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  categoryLabel(category: BusinessIdeaCategory): string {
-    return BusinessIdeaCategory[category];
+  get selectedCount(): number {
+    return this.categoryChips.filter(c => c.selected).length;
   }
 
-  isCategorySelected(category: BusinessIdeaCategory): boolean {
-    return this.selectedCategories.includes(category);
+  get selectedCategories(): BusinessIdeaCategory[] {
+    return this.categoryChips.filter(c => c.selected).map(c => c.value);
   }
 
-  isCategoryDisabled(category: BusinessIdeaCategory): boolean {
-    return !this.isCategorySelected(category) && this.categoriesAtMax;
-  }
-
-  toggleCategory(category: BusinessIdeaCategory): void {
+  toggleCategory(chip: CategoryChip): void {
     this.categoriesTouched = true;
-    if (this.isCategorySelected(category)) {
-      this.selectedCategories = this.selectedCategories.filter((c) => c !== category);
-    } else if (this.selectedCategories.length < this.maxCategories) {
-      this.selectedCategories = [...this.selectedCategories, category];
+    if (chip.selected) {
+      chip.selected = false;
+    } else if (this.selectedCount < this.maxCategories) {
+      chip.selected = true;
     }
-    this.categoriesAtMax = this.selectedCategories.length >= this.maxCategories;
+    const atMax = this.selectedCount >= this.maxCategories;
+    this.categoryChips.forEach(c => c.disabled = !c.selected && atMax);
   }
 
   onSubmit(): void {
     this.categoriesTouched = true;
 
-    if (this.form.invalid || this.selectedCategories.length === 0 || this.submitting) {
+    if (this.form.invalid || this.selectedCount === 0 || this.submitting) {
       this.form.markAllAsTouched();
       return;
     }
