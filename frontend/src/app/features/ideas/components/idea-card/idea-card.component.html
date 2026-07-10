@@ -41,10 +41,10 @@
 
     <h2 class="idea-card__title">{{ idea.name }}</h2>
     <p class="idea-card__uvp">{{ idea.uniqueValueProposition }}</p>
-    @if (idea.categories?.length) {
+    @if (categoryLabels.length) {
   <div class="idea-card__categories">
-    @for (category of idea.categories; track category) {
-      <span class="idea-card__category-chip">{{ categoryLabel(category) }}</span>
+    @for (label of categoryLabels; track label) {
+      <span class="idea-card__category-chip">{{ label }}</span>
     }
   </div>
 }
