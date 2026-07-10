@@ -36,9 +36,13 @@ public class SmtpEmailSender : IEmailSender
             _options.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None,
             cancellationToken);
 
-        if (!string.IsNullOrEmpty(_options.Username))
+        if (!string.IsNullOrEmpty(_options.Username) && !string.IsNullOrEmpty(_options.Password))
         {
             await client.AuthenticateAsync(_options.Username, _options.Password, cancellationToken);
+        }
+        else if (!string.IsNullOrEmpty(_options.Username))
+        {
+            throw new InvalidOperationException("SMTP username is configured but password is missing.");
         }
 
         await client.SendAsync(mime, cancellationToken);
