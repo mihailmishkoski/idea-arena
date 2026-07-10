@@ -48,8 +48,6 @@ public class GetBusinessIdeasQueryHandler : IRequestHandler<GetBusinessIdeasQuer
             query = query.Where(i => i.Categories.Any(c => categoryFilter.Contains(c)));
         }
 
-
-
         // "Winners" shows closed ideas; every other sort shows only active ones.
         query = request.SortBy == IdeaSortOrder.Winners
             ? query.Where(i => i.CreatedAtUtc <= cutoff)
@@ -103,3 +101,4 @@ public class GetBusinessIdeasQueryHandler : IRequestHandler<GetBusinessIdeasQuer
             projected, request.PageNumber, request.PageSize, cancellationToken);
     }
 }
+
