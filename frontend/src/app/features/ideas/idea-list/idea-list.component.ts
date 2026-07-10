@@ -22,6 +22,12 @@ import {
 } from '@core';
 import { SortOptionViewModel } from '../view-models';
 
+interface FilterCategoryChip {
+  value: BusinessIdeaCategory;
+  label: string;
+  selected: boolean;
+}
+
 @Component({
     selector: 'app-idea-list',
     templateUrl: './idea-list.component.html',
@@ -40,9 +46,14 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
   search = '';
   sortMenuOpen = false;
 
-  readonly allCategories = Object.values(BusinessIdeaCategory).filter(
-    (v) => typeof v === 'number'
-  ) as BusinessIdeaCategory[];
+  categoryChips: FilterCategoryChip[] = (
+    Object.values(BusinessIdeaCategory).filter((v) => typeof v === 'number') as BusinessIdeaCategory[]
+  ).map(value => ({
+    value,
+    label: BusinessIdeaCategory[value],
+    selected: false,
+  }));
+
   selectedCategories: BusinessIdeaCategory[] = [];
   categoryMenuOpen = false;
 
@@ -141,22 +152,14 @@ export class IdeaListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.categoryMenuOpen = !this.categoryMenuOpen;
   }
 
-  categoryLabel(category: BusinessIdeaCategory): string {
-    return BusinessIdeaCategory[category];
-  }
-
-  isCategorySelected(category: BusinessIdeaCategory): boolean {
-    return this.selectedCategories.includes(category);
-  }
-
-  toggleCategory(category: BusinessIdeaCategory): void {
-    this.selectedCategories = this.isCategorySelected(category)
-      ? this.selectedCategories.filter((c) => c !== category)
-      : [...this.selectedCategories, category];
+  toggleCategory(chip: FilterCategoryChip): void {
+    chip.selected = !chip.selected;
+    this.selectedCategories = this.categoryChips.filter(c => c.selected).map(c => c.value);
     this.fetchData();
   }
 
   clearCategories(): void {
+    this.categoryChips.forEach(c => c.selected = false);
     this.selectedCategories = [];
     this.fetchData();
   }

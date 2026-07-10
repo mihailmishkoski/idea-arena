@@ -47,14 +47,14 @@
 
       @if (categoryMenuOpen) {
         <div class="category-filter__menu">
-          @for (category of allCategories; track category) {
+          @for (chip of categoryChips; track chip.value) {
             <button
               type="button"
               class="category-chip"
-              [class.category-chip--selected]="isCategorySelected(category)"
-              (click)="toggleCategory(category)"
+              [class.category-chip--selected]="chip.selected"
+              (click)="toggleCategory(chip)"
             >
-              {{ categoryLabel(category) }}
+              {{ chip.label }}
             </button>
           }
           @if (selectedCategories.length > 0) {
