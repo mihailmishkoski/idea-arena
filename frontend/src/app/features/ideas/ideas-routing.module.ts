@@ -17,6 +17,12 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     title: 'Create an Idea · BusinessIdea',
   },
+    {
+    path: 'ideas/:id/edit',
+    component: IdeaCreateComponent,
+    canActivate: [AuthGuard],
+    title: 'Edit Idea · BusinessIdea',
+  },
   { path: 'ideas/:id', component: IdeaDetailComponent, title: 'Idea · BusinessIdea' },
 ];
 

@@ -47,6 +47,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
+// TEMP DEBUG — remove after
+var cs = app.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"[DEBUG] Connection string: {cs}");
+
 // Apply any pending migrations on startup so the app is runnable out of the box.
 using (var scope = app.Services.CreateScope())
 {
