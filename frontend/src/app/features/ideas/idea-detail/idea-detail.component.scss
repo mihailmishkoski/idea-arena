@@ -276,6 +276,22 @@
   }
 }
 
+ 
+
+.post__edit {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--meta);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    color: #259823b6;
+  }
+}
+
 .post__title {
   margin: 6px 0 16px;
   font-size: 22px;

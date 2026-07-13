@@ -195,6 +195,7 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.fetchComments());
   }
+  
 
   /** Sends (or reuses) a plain chat request to the idea's author. */
   onChatWithAuthor(): void {
@@ -290,6 +291,21 @@ export class IdeaDetailComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.router.navigate(['/']));
   }
+  
+ onEditIdea(): void {
+  if (!this.idea || !confirm('Edit this idea?')) {
+    return;
+  }
+
+  this.router.navigate(
+    ['/ideas', this.idea.id, 'edit'],
+    {
+      state: {
+        idea: this.idea
+      }
+    }
+  );
+}
 
   trackByCommentId(_index: number, comment: CommentNodeViewModel): string {
     return comment.id;

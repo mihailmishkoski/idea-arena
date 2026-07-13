@@ -26,6 +26,11 @@ public class UpdateBusinessIdeaCommandHandler : IRequestHandler<UpdateBusinessId
         {
             throw new ForbiddenAccessException("You can only edit your own ideas.");
         }
+          if (DateTime.UtcNow - idea.CreatedAtUtc <= TimeSpan.FromMinutes(30))
+        {
+            throw new ForbiddenAccessException("Business ideas can only be edited within 30 minutes of creation.");
+        }
+       
 
         idea.Name = request.Name.Trim();
         idea.UniqueValueProposition = request.UniqueValueProposition.Trim();
@@ -35,7 +40,6 @@ public class UpdateBusinessIdeaCommandHandler : IRequestHandler<UpdateBusinessId
         idea.IncomeStrategy = request.IncomeStrategy?.Trim();
         idea.ExitStrategy = request.ExitStrategy?.Trim();
         idea.VideoPitchUrl = request.VideoPitchUrl?.Trim();
-
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
