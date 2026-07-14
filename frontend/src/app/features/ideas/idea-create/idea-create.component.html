@@ -76,6 +76,10 @@
         @if (categoriesTouched && selectedCount === 0) {
           <small class="field__error">Pick at least one category.</small>
         }
+
+        @if (selectedCount >= maxCategories) {
+          <small class="field__hint">You've selected the maximum of {{ maxCategories }} categories.</small>
+      }
       </div>
 
       <div class="field">
