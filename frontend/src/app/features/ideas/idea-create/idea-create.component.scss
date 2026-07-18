@@ -113,3 +113,14 @@
   font-size: 12px;
   color: #ea0027;
 }
+
+.field__error {
+  display: block;
+  min-height: 18px;
+  margin-top: 4px;
+  color: transparent;
+}
+
+.field__error--visible {
+  color: #d32f2f;
+}
