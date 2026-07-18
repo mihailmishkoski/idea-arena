@@ -1,17 +1,13 @@
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   BusinessIdeaSummaryViewModel,
+  BusinessIdeaCategory,
   HOT_SCORE_THRESHOLD,
   VoteDirection,
   ideaExpiresAt,
 } from '@core';
 
-/**
- * A single idea row in the feed. The whole card is clickable; the vote rail
- * stops propagation. Active high-scoring ideas get a "hot" treatment, and the
- * top closed idea gets a winner badge.
- */
 @Component({
     selector: 'app-idea-card',
     templateUrl: './idea-card.component.html',
@@ -19,20 +15,27 @@ import {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class IdeaCardComponent {
+export class IdeaCardComponent implements OnChanges {
   @Input() idea!: BusinessIdeaSummaryViewModel;
   @Input() isWinner = false;
   @Input() closed = false;
 
   @Output() vote = new EventEmitter<VoteDirection>();
 
+  categoryLabels: string[] = [];
+
   constructor(private readonly router: Router) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['idea']) {
+      this.categoryLabels = (this.idea.categories ?? []).map(c => BusinessIdeaCategory[c]);
+    }
+  }
 
   get isHot(): boolean {
     return !this.closed && this.idea.score >= HOT_SCORE_THRESHOLD;
   }
 
-  /** Human countdown until the idea closes, or null when already closed. */
   get timeLeftLabel(): string | null {
     if (this.closed) {
       return null;

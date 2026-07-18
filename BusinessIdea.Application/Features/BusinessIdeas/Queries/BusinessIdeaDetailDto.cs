@@ -10,6 +10,7 @@ public class BusinessIdeaDetailDto
     public string UniqueValueProposition { get; init; } = string.Empty;
     public string Problem { get; init; } = string.Empty;
     public string Solution { get; init; } = string.Empty;
+    public List<BusinessIdeaCategory> Categories { get; init; } = new();
     public string? Competition { get; init; }
     public string? IncomeStrategy { get; init; }
     public string? ExitStrategy { get; init; }

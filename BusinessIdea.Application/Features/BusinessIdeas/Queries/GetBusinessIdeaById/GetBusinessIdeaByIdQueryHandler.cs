@@ -31,6 +31,7 @@ public class GetBusinessIdeaByIdQueryHandler : IRequestHandler<GetBusinessIdeaBy
                 UniqueValueProposition = i.UniqueValueProposition,
                 Problem = i.Problem,
                 Solution = i.Solution,
+                Categories = i.Categories,
                 Competition = i.Competition,
                 IncomeStrategy = i.IncomeStrategy,
                 ExitStrategy = i.ExitStrategy,

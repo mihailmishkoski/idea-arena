@@ -1,5 +1,8 @@
 <div class="page">
   <div class="create card">
+    <a routerLink="/" class="create__back">
+  <span class="create__back-icon">←</span> Back to feed
+</a>
     <h1 class="create__title">Create an Idea</h1>
     <p class="create__subtitle">
       Pitch your business. Fields marked <span class="req">*</span> are required.
@@ -45,15 +48,38 @@
       </div>
 
       <div class="field">
-        <label for="solution">Solution <span class="req">*</span></label>
-        <textarea id="solution" formControlName="solution"
-        placeholder="How does it solve the problem?"></textarea>
-        @if (form.get('solution')?.touched && form.get('solution')?.invalid) {
-          <small class="field__error"
+          <label for="solution">Solution <span class="req">*</span></label>
+          <textarea id="solution" formControlName="solution"
+          placeholder="How does it solve the problem?"></textarea>
+          @if (form.get('solution')?.touched && form.get('solution')?.invalid) {
+            <small class="field__error">
+              Describe your solution.
+            </small>
+          }
+</div>
+
+      <div class="field">
+        <label>Categories <span class="req">*</span> <small>(up to 3)</small></label>
+        <div class="category-picker">
+          @for (chip of categoryChips; track chip.value) {
+            <button
+              type="button"
+              class="category-chip"
+              [class.category-chip--selected]="chip.selected"
+              [disabled]="chip.disabled"
+              (click)="toggleCategory(chip)"
             >
-            Describe your solution.
-          </small>
-        }
+              {{ chip.label }}
+            </button>
+          }
+        </div>
+        <small class="field__error" [class.field__error--visible]="categoriesTouched && selectedCategories.length === 0">
+          Pick at least one category.
+        </small>
+
+        @if (selectedCount >= maxCategories) {
+          <small class="field__hint">You've selected the maximum of {{ maxCategories }} categories.</small>
+      }
       </div>
 
       <div class="field">
@@ -92,3 +118,4 @@
       </form>
     </div>
   </div>
+

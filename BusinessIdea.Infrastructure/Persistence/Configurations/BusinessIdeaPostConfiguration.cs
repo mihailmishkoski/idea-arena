@@ -18,7 +18,12 @@ public class BusinessIdeaPostConfiguration : BaseEntityConfiguration<BusinessIde
         builder.Property(x => x.Competition).HasMaxLength(2000);
         builder.Property(x => x.IncomeStrategy).HasMaxLength(2000);
         builder.Property(x => x.ExitStrategy).HasMaxLength(2000);
+
         builder.Property(x => x.VideoPitchUrl).HasMaxLength(2048);
+
+        builder.Property(x => x.Categories)
+            .HasColumnType("smallint[]");
+
         builder.Property(x => x.AuthorId).IsRequired();
         builder.HasIndex(x => x.AuthorId);
         builder.HasIndex(x => x.CreatedAtUtc);

@@ -1,3 +1,5 @@
+import { BusinessIdeaCategory } from '../enums';
+
 export interface CreateIdeaRequest {
   name: string;
   uniqueValueProposition: string;
@@ -7,4 +9,5 @@ export interface CreateIdeaRequest {
   incomeStrategy?: string | null;
   exitStrategy?: string | null;
   videoPitchUrl?: string | null;
+  categories: BusinessIdeaCategory[];
 }

@@ -21,6 +21,10 @@ public class CreateBusinessIdeaCommandValidator : AbstractValidator<CreateBusine
         RuleFor(x => x.Solution)
             .NotEmpty().WithMessage("Describe your solution.")
             .MaximumLength(2000);
+        
+        RuleFor(x => x.Categories)
+            .NotEmpty().WithMessage("Pick at least one category.")
+            .Must(c => c.Count <= 3).WithMessage("An idea can belong to at most 3 categories.");
 
         RuleFor(x => x.Competition).MaximumLength(2000);
         RuleFor(x => x.IncomeStrategy).MaximumLength(2000);

@@ -169,3 +169,32 @@
   padding: 3px 40px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
+
+.idea-card__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.idea-card__category-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f3f0fb;
+  color: #6b4fbb;
+  line-height: 1.4;
+
+  // Cycle pastel colors to match the create-page chips
+  &:nth-of-type(8n + 1) { background: #f3f0fb; color: #6b4fbb; }
+  &:nth-of-type(8n + 2) { background: #fdeceb; color: #d1554a; }
+  &:nth-of-type(8n + 3) { background: #e9f7ef; color: #2f9e5c; }
+  &:nth-of-type(8n + 4) { background: #fdf1e3; color: #c8822a; }
+  &:nth-of-type(8n + 5) { background: #e8f6f3; color: #2a9d8f; }
+  &:nth-of-type(8n + 6) { background: #eaf0fd; color: #3f66c9; }
+  &:nth-of-type(8n + 7) { background: #fdeaf1; color: #c93f7a; }
+  &:nth-of-type(8n + 8) { background: #f2f2f2; color: #555; }
+}

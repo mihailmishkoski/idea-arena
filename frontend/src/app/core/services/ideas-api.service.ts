@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE } from '../api.config';
 import { BusinessIdeaMapper, PaginatedListMapper } from '../mappers';
-import { IdeaSortOrder } from '../models/enums';
+import { IdeaSortOrder, BusinessIdeaCategory } from '../models/enums';
 import { CreateIdeaRequest } from '../models/requests';
 import { BusinessIdeaDetailResponse, BusinessIdeaSummaryResponse, PaginatedListResponse } from '../models/responses';
 import { BusinessIdeaDetailViewModel, BusinessIdeaSummaryViewModel, PaginatedListViewModel } from '../models/view-models';
@@ -19,7 +19,8 @@ export class IdeasApiService {
     sortBy: IdeaSortOrder = IdeaSortOrder.Top,
     pageNumber = 1,
     pageSize = 20,
-    search?: string | null
+    search?: string | null,
+    categories?: BusinessIdeaCategory[] | null
   ): Observable<PaginatedListViewModel<BusinessIdeaSummaryViewModel>> {
     let params = new HttpParams()
       .set('sortBy', sortBy)
@@ -28,6 +29,12 @@ export class IdeasApiService {
 
     if (search && search.trim()) {
       params = params.set('search', search.trim());
+    }
+
+    if (categories && categories.length > 0) {
+      for (const category of categories) {
+        params = params.append('categories', category);
+      }
     }
 
     return this.http

@@ -3,7 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { CreateIdeaRequest, IdeasApiService } from '@core';
+import { CreateIdeaRequest, IdeasApiService, BusinessIdeaCategory } from '@core';
+
+interface CategoryChip {
+  value: BusinessIdeaCategory;
+  label: string;
+  selected: boolean;
+  disabled: boolean;
+}
 
 @Component({
     selector: 'app-idea-create',
@@ -16,6 +23,20 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   submitting = false;
   errorMessage: string | null = null;
+
+  readonly maxCategories = 3;
+  readonly allCategories = Object.values(BusinessIdeaCategory).filter(
+    (v) => typeof v === 'number'
+  ) as BusinessIdeaCategory[];
+
+  categoryChips: CategoryChip[] = this.allCategories.map(value => ({
+    value,
+    label: BusinessIdeaCategory[value],
+    selected: false,
+    disabled: false,
+  }));
+
+  categoriesTouched = false;
 
   private readonly urlPattern = /^https?:\/\/.+/i;
   private readonly destroy$ = new Subject<void>();
@@ -44,8 +65,29 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  get selectedCount(): number {
+    return this.categoryChips.filter(c => c.selected).length;
+  }
+
+  get selectedCategories(): BusinessIdeaCategory[] {
+    return this.categoryChips.filter(c => c.selected).map(c => c.value);
+  }
+
+  toggleCategory(chip: CategoryChip): void {
+    this.categoriesTouched = true;
+    if (chip.selected) {
+      chip.selected = false;
+    } else if (this.selectedCount < this.maxCategories) {
+      chip.selected = true;
+    }
+    const atMax = this.selectedCount >= this.maxCategories;
+    this.categoryChips.forEach(c => c.disabled = !c.selected && atMax);
+  }
+
   onSubmit(): void {
-    if (this.form.invalid || this.submitting) {
+    this.categoriesTouched = true;
+
+    if (this.form.invalid || this.selectedCount === 0 || this.submitting) {
       this.form.markAllAsTouched();
       return;
     }
@@ -78,6 +120,7 @@ export class IdeaCreateComponent implements OnInit, OnDestroy {
       incomeStrategy: trimOrNull(v.incomeStrategy),
       exitStrategy: trimOrNull(v.exitStrategy),
       videoPitchUrl: trimOrNull(v.videoPitchUrl),
+      categories: this.selectedCategories,
     };
   }
 }
